@@ -1,0 +1,56 @@
+{
+    "name": "yiisoft/db-redis",
+    "description": "Yii Framework Redis Cache, Session and ActiveRecord extension",
+    "keywords": ["yii", "redis", "active-record", "cache", "session"],
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yiisoft/yii-redis/issues",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii-redis"
+    },
+    "authors": [
+        {
+            "name": "Carsten Brandt",
+            "email": "mail@cebe.cc"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "yiisoft/yii-core": "^3.0@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3",
+        "hiqdev/composer-config-plugin": "^1.0@dev",
+        "yiisoft/active-record": "^3.0@dev",
+        "yiisoft/yii-console": "^3.0@dev",
+        "yiisoft/di": "^3.0@dev",
+        "yiisoft/log": "^3.0@dev",
+        "yiisoft/cache": "^3.0@dev",
+        "yiisoft/yii-web": "^3.0@dev",
+        "yiisoft/mutex": "^3.0@dev"
+    },
+    "autoload": {
+        "psr-4": { "yii\\db\\redis\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": { "yii\\db\\redis\\tests\\": "tests/"}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        },
+        "config-plugin": {
+            "tests": "config/tests.php"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}
