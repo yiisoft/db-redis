@@ -1,5 +1,5 @@
 {
-    "name": "yiisoft/yii-redis",
+    "name": "yiisoft/db-redis",
     "description": "Yii Framework Redis Cache, Session and ActiveRecord extension",
     "keywords": ["yii", "redis", "active-record", "cache", "session"],
     "type": "library",
