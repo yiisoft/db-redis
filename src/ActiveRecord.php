@@ -7,11 +7,11 @@
 
 namespace yii\redis;
 
-use Yii;
 use yii\base\InvalidConfigException;
-use yii\db\BaseActiveRecord;
+use yii\activerecord\BaseActiveRecord;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
+use yii\helpers\Yii;
 
 /**
  * ActiveRecord is the base class for classes representing relational data in terms of objects.
@@ -55,7 +55,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function find()
     {
-        return Yii::createObject(ActiveQuery::className(), [get_called_class()]);
+        return Yii::createObject(ActiveQuery::class, [get_called_class()]);
     }
 
     /**

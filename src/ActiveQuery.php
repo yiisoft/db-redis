@@ -10,9 +10,9 @@ namespace yii\redis;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\base\NotSupportedException;
-use yii\db\ActiveQueryInterface;
-use yii\db\ActiveQueryTrait;
-use yii\db\ActiveRelationTrait;
+use yii\activerecord\ActiveQueryInterface;
+use yii\activerecord\ActiveQueryTrait;
+use yii\activerecord\ActiveRelationTrait;
 use yii\db\QueryTrait;
 
 /**
@@ -91,7 +91,6 @@ class ActiveQuery extends Component implements ActiveQueryInterface
     public function __construct($modelClass, $config = [])
     {
         $this->modelClass = $modelClass;
-        parent::__construct($config);
     }
 
     /**

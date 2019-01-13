@@ -7,9 +7,9 @@
 
 namespace yii\redis;
 
-use Yii;
-use yii\base\InvalidConfigException;
+use yii\exceptions\InvalidConfigException;
 use yii\di\Instance;
+use yii\helpers\Yii;
 
 /**
  * Redis Mutex implements a mutex component using [redis](http://redis.io/) as the storage medium.
@@ -92,9 +92,9 @@ class Mutex extends \yii\mutex\Mutex
     public function init()
     {
         parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::className());
+        $this->redis = Instance::ensure($this->redis, Connection::class);
         if ($this->keyPrefix === null) {
-            $this->keyPrefix = substr(md5(Yii::$app->id), 0, 5);
+            $this->keyPrefix = substr(md5(Yii::getApp()->id), 0, 5);
         }
     }
 
@@ -108,7 +108,7 @@ class Mutex extends \yii\mutex\Mutex
     protected function acquireLock($name, $timeout = 0)
     {
         $key = $this->calculateKey($name);
-        $value = Yii::$app->security->generateRandomString(20);
+        $value = Yii::getApp()->security->generateRandomString(20);
         $waitTime = 0;
         while (!$this->redis->executeCommand('SET', [$key, $value, 'NX', 'PX', (int) ($this->expire * 1000)])) {
             $waitTime++;

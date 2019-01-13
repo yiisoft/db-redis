@@ -1,8 +1,8 @@
 <?php
 
-namespace yiiunit\extensions\redis;
+namespace yii\db\redis\tests;
 
-use Yii;
+use yii\helpers\Yii;
 use yii\redis\Connection;
 use yii\redis\Mutex;
 
@@ -109,7 +109,8 @@ class RedisMutexTest extends TestCase
         }
 
         $connection = new Connection($params);
-        $this->mockApplication(['components' => ['redis' => $connection]]);
+        $this->container->set('redis', $connection);
+        $this->mockApplication();
     }
 
     /**
@@ -119,7 +120,7 @@ class RedisMutexTest extends TestCase
     protected function createMutex()
     {
         return Yii::createObject([
-            'class' => Mutex::className(),
+            '__class' => Mutex::class,
             'expire' => 1.5,
             'keyPrefix' => static::$mutexPrefix
         ]);
@@ -139,11 +140,11 @@ class RedisMutexTest extends TestCase
 
     protected function assertMutexKeyInRedis()
     {
-        $this->assertNotNull(Yii::$app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
+        $this->assertNotNull($this->app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
     }
 
     protected function assertMutexKeyNotInRedis()
     {
-        $this->assertNull(Yii::$app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
+        $this->assertNull($this->app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
-namespace yiiunit\extensions\redis;
+namespace yii\db\redis\tests;
+
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\log\Logger;
@@ -117,7 +118,7 @@ class ConnectionTest extends TestCase
     public function testConnectionTimeoutRetry()
     {
         $logger = new Logger();
-        Yii::setLogger($logger);
+        $this->container->set('logger', $logger);
 
         $db = $this->getConnection(false);
         $db->retries = 1;
@@ -145,7 +146,7 @@ class ConnectionTest extends TestCase
     public function testConnectionTimeoutRetryCount()
     {
         $logger = new Logger();
-        Yii::setLogger($logger);
+        $this->container->set('logger', $logger);
 
         $db = $this->getConnection(false);
         $db->retries = 2;

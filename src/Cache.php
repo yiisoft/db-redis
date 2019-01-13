@@ -7,7 +7,7 @@
 
 namespace yii\redis;
 
-use Yii;
+use yii\helpers\Yii;
 use yii\di\Instance;
 
 /**
@@ -78,7 +78,7 @@ use yii\di\Instance;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  */
-class Cache extends \yii\caching\Cache
+class Cache extends \yii\cache\SimpleCache
 {
     /**
      * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
@@ -128,7 +128,7 @@ class Cache extends \yii\caching\Cache
     public function init()
     {
         parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::className());
+        $this->redis = Instance::ensure($this->redis, Connection::class);
     }
 
     /**
@@ -157,7 +157,7 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function getValues($keys)
+    protected function getValues($keys): array
     {
         $response = $this->getReplica()->executeCommand('MGET', $keys);
         $result = [];
@@ -172,21 +172,21 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function setValue($key, $value, $expire)
+    protected function setValue($key, $value, $ttl): bool
     {
-        if ($expire == 0) {
+        if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value]);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
 
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $expire]);
+            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl]);
         }
     }
 
     /**
      * @inheritdoc
      */
-    protected function setValues($data, $expire)
+    protected function setValues($data, $ttl): bool
     {
         $args = [];
         foreach ($data as $key => $value) {
@@ -195,15 +195,15 @@ class Cache extends \yii\caching\Cache
         }
 
         $failedKeys = [];
-        if ($expire == 0) {
+        if ($ttl == 0) {
             $this->redis->executeCommand('MSET', $args);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
             $this->redis->executeCommand('MULTI');
             $this->redis->executeCommand('MSET', $args);
             $index = [];
             foreach ($data as $key => $value) {
-                $this->redis->executeCommand('PEXPIRE', [$key, $expire]);
+                $this->redis->executeCommand('PEXPIRE', [$key, $ttl]);
                 $index[] = $key;
             }
             $result = $this->redis->executeCommand('EXEC');
@@ -221,21 +221,21 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function addValue($key, $value, $expire)
+    protected function addValue($key, $value, $ttl)
     {
-        if ($expire == 0) {
+        if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value, 'NX']);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
 
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $expire, 'NX']);
+            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl, 'NX']);
         }
     }
 
     /**
      * @inheritdoc
      */
-    protected function deleteValue($key)
+    protected function deleteValue($key): bool
     {
         return (bool) $this->redis->executeCommand('DEL', [$key]);
     }
@@ -243,7 +243,7 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function flushValues()
+    public function clear()
     {
         return $this->redis->executeCommand('FLUSHDB');
     }
@@ -272,7 +272,7 @@ class Cache extends \yii\caching\Cache
         $replicas = $this->replicas;
         shuffle($replicas);
         $config = array_shift($replicas);
-        $this->_replica = Instance::ensure($config, Connection::className());
+        $this->_replica = Instance::ensure($config, Connection::class);
         return $this->_replica;
     }
 }

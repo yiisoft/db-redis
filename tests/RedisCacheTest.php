@@ -1,11 +1,11 @@
 <?php
 
-namespace yiiunit\extensions\redis;
+namespace yii\db\redis\tests;
 
 use yii\base\InvalidConfigException;
 use yii\redis\Cache;
 use yii\redis\Connection;
-use yiiunit\framework\caching\CacheTestCase;
+use yii\cache\tests\unit\CacheTestCase;
 
 /**
  * Class for testing redis cache backend
@@ -31,7 +31,8 @@ class RedisCacheTest extends CacheTestCase
 //            $this->markTestSkipped('No redis server running at ' . $connection->hostname . ':' . $connection->port . ' : ' . $errorNumber . ' - ' . $errorDescription);
 //        }
 
-        $this->mockApplication(['components' => ['redis' => $connection]]);
+        $this->container->set('redis', $connection);
+        $this->mockApplication(); //['components' => ['redis' => $connection]]);
 
         if ($this->_cacheInstance === null) {
             $this->_cacheInstance = new Cache();
