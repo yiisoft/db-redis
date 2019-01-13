@@ -119,10 +119,11 @@ class Cache extends \yii\cache\SimpleCache
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
      * @throws \yii\exceptions\InvalidConfigException if [[redis]] is invalid.
      */
-    public function init()
+    public function __construct(Connection $redis, $serializer = null)
     {
-        parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::class);
+        parent::__construct($serializer);
+
+        $this->redis = $redis;
     }
 
     /**
@@ -209,7 +210,8 @@ class Cache extends \yii\cache\SimpleCache
             }
         }
 
-        return $failedKeys;
+        // FIXME: Where do we access failed keys from ?
+        return count($failedKeys) === 0;
     }
 
     /**
@@ -266,7 +268,7 @@ class Cache extends \yii\cache\SimpleCache
         $replicas = $this->replicas;
         shuffle($replicas);
         $config = array_shift($replicas);
-        $this->_replica = Instance::ensure($config, Connection::class);
+        $this->_replica = Yii::ensureObject($config, Connection::class);
         return $this->_replica;
     }
 }

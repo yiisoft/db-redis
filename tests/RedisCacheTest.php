@@ -35,7 +35,7 @@ class RedisCacheTest extends CacheTestCase
         $this->mockApplication(); //['components' => ['redis' => $connection]]);
 
         if ($this->_cacheInstance === null) {
-            $this->_cacheInstance = new Cache();
+            $this->_cacheInstance = new Cache($connection);
         }
 
         return $this->_cacheInstance;
@@ -110,7 +110,7 @@ class RedisCacheTest extends CacheTestCase
 //            $this->assertTrue($cache->get($key) === false); // do not display 100KB in terminal if this fails :)
             $cache->set($key, $data);
         }
-        $values = $cache->multiGet(array_keys($keys));
+        $values = $cache->getMultiple(array_keys($keys));
         foreach ($keys as $key => $value) {
             $this->assertArrayHasKey($key, $values);
             $this->assertSame($values[$key], $value);

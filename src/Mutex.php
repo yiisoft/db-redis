@@ -85,10 +85,12 @@ class Mutex extends \yii\mutex\Mutex
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
      * @throws InvalidConfigException if [[redis]] is invalid.
      */
-    public function init()
+    public function __construct(Connection $redis, $autoRelease = true)
     {
-        parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::class);
+        parent::__construct($autoRelease);
+        $this->redis = $redis;
+
+        // FIXME: needs to be set elsewhere
         if ($this->keyPrefix === null) {
             $this->keyPrefix = substr(md5(Yii::getApp()->id), 0, 5);
         }
