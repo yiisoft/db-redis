@@ -2,7 +2,7 @@
 ====================================
 
 `Cache` コンポーネントを使用するためには、[インストール](installation.md) の節で説明した接続の構成に加えて、
-`cache` コンポーネントを [[yii\redis\Cache]] として構成する必要があります。
+`cache` コンポーネントを [[yii\db\redis\Cache]] として構成する必要があります。
 
 ```php
 return [
@@ -10,7 +10,7 @@ return [
     'components' => [
         // ...
         'cache' => [
-            'class' => 'yii\redis\Cache',
+            'class' => 'yii\db\redis\Cache',
         ],
     ]
 ];
@@ -25,7 +25,7 @@ return [
     'components' => [
         // ...
         'cache' => [
-            'class' => 'yii\redis\Cache',
+            'class' => 'yii\db\redis\Cache',
             'redis' => [
                 'hostname' => 'localhost',
                 'port' => 6379,
@@ -37,7 +37,7 @@ return [
 ```
 
 このキャッシュは [[yii\caching\CacheInterface]] の全てのメソッドを提供します。インタフェイスに含まれていない redis 固有のメソッドにアクセスしたい場合は、
-[[yii\redis\Connection]] のインスタンスである [[yii\redis\Cache::$redis]] を通じてアクセスすることが出来ます。
+[[yii\db\redis\Connection]] のインスタンスである [[yii\db\redis\Cache::$redis]] を通じてアクセスすることが出来ます。
 
 ```php
 Yii::$app->cache->redis->hset('mykey', 'somefield', 'somevalue');
@@ -45,4 +45,4 @@ Yii::$app->cache->redis->hget('mykey', 'somefield');
 ...
 ```
 
-利用可能なメソッドの一覧は [[yii\redis\Connection]] を参照して下さい。
+利用可能なメソッドの一覧は [[yii\db\redis\Connection]] を参照して下さい。

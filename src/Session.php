@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
 use yii\helpers\Yii;
 use yii\exceptions\InvalidConfigException;
@@ -22,15 +22,13 @@ use yii\exceptions\InvalidConfigException;
  *
  * ~~~
  * [
- *     'components' => [
- *         'session' => [
- *             'class' => 'yii\redis\Session',
- *             'redis' => [
- *                 'hostname' => 'localhost',
- *                 'port' => 6379,
- *                 'database' => 0,
- *             ]
- *         ],
+ *     'session' => [
+ *         '__class' => \yii\db\redis\Session::class,
+ *         'redis' => [
+ *             'hostname' => 'localhost',
+ *             'port' => 6379,
+ *             'database' => 0,
+ *         ]
  *     ],
  * ]
  * ~~~
@@ -39,11 +37,9 @@ use yii\exceptions\InvalidConfigException;
  *
  * ~~~
  * [
- *     'components' => [
- *         'session' => [
- *             'class' => 'yii\redis\Session',
- *             // 'redis' => 'redis' // id of the connection application component
- *         ],
+ *     'session' => [
+ *         '__class' => yii\db\redis\Session::class,
+ *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]
  * ~~~

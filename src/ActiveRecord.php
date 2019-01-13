@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
 use yii\exceptions\InvalidConfigException;
 use yii\activerecord\BaseActiveRecord;
@@ -24,7 +24,7 @@ use yii\helpers\Yii;
  * The following is an example model called `Customer`:
  *
  * ```php
- * class Customer extends \yii\redis\ActiveRecord
+ * class Customer extends \yii\db\redis\ActiveRecord
  * {
  *     public function attributes()
  *     {

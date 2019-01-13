@@ -2,8 +2,8 @@
 
 namespace yii\db\redis\tests;
 
-use yii\redis\ActiveQuery;
-use yii\redis\LuaScriptBuilder;
+use yii\db\redis\ActiveQuery;
+use yii\db\redis\LuaScriptBuilder;
 use yii\db\redis\tests\data\ar\ActiveRecord;
 use yii\db\redis\tests\data\ar\Customer;
 use yii\db\redis\tests\data\ar\OrderItem;

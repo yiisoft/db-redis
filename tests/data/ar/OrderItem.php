@@ -32,7 +32,7 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrder()
     {
@@ -40,7 +40,7 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItem()
     {

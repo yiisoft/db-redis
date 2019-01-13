@@ -37,7 +37,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrders()
     {
@@ -45,7 +45,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getExpensiveOrders()
     {
@@ -53,7 +53,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getExpensiveOrdersWithNullFK()
     {
@@ -61,7 +61,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrdersWithNullFK()
     {
@@ -69,7 +69,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrdersWithItems()
     {
@@ -77,7 +77,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItems()
     {

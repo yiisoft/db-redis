@@ -5,12 +5,13 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
 use yii\base\Component;
 use yii\db\Exception;
 use yii\helpers\Inflector;
 use yii\helpers\Yii;
+use yii\db\ConnectionInterface;
 
 /**
  * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.
@@ -231,7 +232,7 @@ use yii\helpers\Yii;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  */
-class Connection extends Component
+class Connection extends Component implements ConnectionInterface
 {
     /**
      * @event Event an event that is triggered after a DB connection is established

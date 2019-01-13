@@ -3,8 +3,8 @@
 namespace yii\db\redis\tests;
 
 use yii\helpers\Yii;
-use yii\redis\Connection;
-use yii\redis\Mutex;
+use yii\db\redis\Connection;
+use yii\db\redis\Mutex;
 
 /**
  * Class for testing redis mutex
@@ -62,8 +62,8 @@ class RedisMutexTest extends TestCase
     }
 
     /**
-     * @covers \yii\redis\Mutex::acquireLock
-     * @covers \yii\redis\Mutex::releaseLock
+     * @covers \yii\db\redis\Mutex::acquireLock
+     * @covers \yii\db\redis\Mutex::releaseLock
      * @dataProvider acquireTimeoutProvider
      */
     public function testConcurentMutexAcquireAndRelease($timeout, $canAcquireAfterTimeout, $lockIsReleased)

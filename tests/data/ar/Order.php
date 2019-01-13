@@ -32,7 +32,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getCustomer()
     {
@@ -40,7 +40,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItems()
     {
@@ -48,7 +48,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItems()
     {
@@ -59,7 +59,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsIndexed()
     {
@@ -68,7 +68,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsWithNullFK()
     {
@@ -77,7 +77,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItemsWithNullFK()
     {
@@ -85,7 +85,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsInOrder1()
     {
@@ -96,7 +96,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsInOrder2()
     {
@@ -107,7 +107,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getBooks()
     {
@@ -117,7 +117,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getBooksWithNullFK()
     {

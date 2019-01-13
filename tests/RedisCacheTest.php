@@ -3,8 +3,8 @@
 namespace yii\db\redis\tests;
 
 use yii\exceptions\InvalidConfigException;
-use yii\redis\Cache;
-use yii\redis\Connection;
+use yii\db\redis\Cache;
+use yii\db\redis\Connection;
 use yii\cache\tests\unit\CacheTestCase;
 
 /**
@@ -43,7 +43,7 @@ class RedisCacheTest extends CacheTestCase
 
     protected function resetCacheInstance()
     {
-        $this->getCacheInstance()->flush();
+        $this->getCacheInstance()->clear();
         $this->_cacheInstance = null;
     }
 

@@ -30,10 +30,11 @@
         "yiisoft/di": "^3.0@dev",
         "yiisoft/log": "^3.0@dev",
         "yiisoft/cache": "^3.0@dev",
+        "yiisoft/yii-web": "^3.0@dev",
         "yiisoft/mutex": "^3.0@dev"
     },
     "autoload": {
-        "psr-4": { "yii\\redis\\": "src" }
+        "psr-4": { "yii\\db\\redis\\": "src" }
     },
     "autoload-dev": {
         "psr-4": { "yii\\db\\redis\\tests\\": "tests/"}

@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
 use yii\exceptions\InvalidParamException;
 use yii\exceptions\NotSupportedException;

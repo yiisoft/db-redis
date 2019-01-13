@@ -2,7 +2,7 @@
 
 namespace yii\db\redis\tests\data\ar;
 
-use yii\redis\ActiveQuery;
+use yii\db\redis\ActiveQuery;
 
 /**
  * CustomerQuery
