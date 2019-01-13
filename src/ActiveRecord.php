@@ -7,7 +7,7 @@
 
 namespace yii\redis;
 
-use yii\base\InvalidConfigException;
+use yii\exceptions\InvalidConfigException;
 use yii\activerecord\BaseActiveRecord;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;

@@ -4,7 +4,6 @@ namespace yii\db\redis\tests;
 
 use yii\di\Container;
 use yii\helpers\ArrayHelper;
-use Yii;
 use yii\redis\Connection;
 
 /**
@@ -63,26 +62,5 @@ abstract class TestCase extends \yii\tests\TestCase
         }
 
         return $db;
-    }
-
-    /**
-     * Invokes a inaccessible method.
-     * @param $object
-     * @param $method
-     * @param array $args
-     * @param bool $revoke whether to make method inaccessible after execution
-     * @return mixed
-     */
-    protected function invokeMethod($object, $method, $args = [], $revoke = true)
-    {
-        $reflection = new \ReflectionObject($object);
-        $method = $reflection->getMethod($method);
-        $method->setAccessible(true);
-        $result = $method->invokeArgs($object, $args);
-        if ($revoke) {
-            $method->setAccessible(false);
-        }
-
-        return $result;
     }
 }

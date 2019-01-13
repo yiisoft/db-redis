@@ -6,7 +6,7 @@ use yii\activerecord\data\ActiveDataProvider;
 use yii\redis\ActiveQuery;
 use yii\db\redis\tests\data\ar\ActiveRecord;
 use yii\db\redis\tests\data\ar\Item;
-use yiiunit\framework\ar\ActiveRecordTestTrait;
+use yii\activerecord\tests\unit\ActiveRecordTestTrait;
 
 /**
  * @group redis

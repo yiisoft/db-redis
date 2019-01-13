@@ -115,7 +115,7 @@ class RedisMutexTest extends TestCase
 
     /**
      * @return Mutex
-     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\exceptions\InvalidConfigException
      */
     protected function createMutex()
     {

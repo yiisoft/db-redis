@@ -8,8 +8,8 @@
 namespace yii\redis;
 
 use yii\base\Component;
-use yii\base\InvalidParamException;
-use yii\base\NotSupportedException;
+use yii\exceptions\InvalidParamException;
+use yii\exceptions\NotSupportedException;
 use yii\activerecord\ActiveQueryInterface;
 use yii\activerecord\ActiveQueryTrait;
 use yii\activerecord\ActiveRelationTrait;
@@ -416,8 +416,8 @@ class ActiveQuery extends Component implements ActiveQueryInterface
      * @param string $type the type of the script to generate
      * @param string $columnName
      * @return array|bool|null|string
-     * @throws \yii\base\InvalidParamException
-     * @throws \yii\base\NotSupportedException
+     * @throws \yii\exceptions\InvalidParamException
+     * @throws \yii\exceptions\NotSupportedException
      */
     private function findByPk($db, $type, $columnName = null)
     {

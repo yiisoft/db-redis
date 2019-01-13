@@ -123,7 +123,7 @@ class Cache extends \yii\cache\SimpleCache
     /**
      * Initializes the redis Cache component.
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
-     * @throws \yii\base\InvalidConfigException if [[redis]] is invalid.
+     * @throws \yii\exceptions\InvalidConfigException if [[redis]] is invalid.
      */
     public function init()
     {
@@ -253,7 +253,7 @@ class Cache extends \yii\cache\SimpleCache
      * defined in this instance. Only used in getValue() and getValues().
      * @since 2.0.8
      * @return array|string|Connection
-     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\exceptions\InvalidConfigException
      */
     protected function getReplica()
     {

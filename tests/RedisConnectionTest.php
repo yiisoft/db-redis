@@ -2,8 +2,8 @@
 
 namespace yii\db\redis\tests;
 
-use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Yii;
 use yii\log\Logger;
 use yii\redis\Connection;
 use yii\redis\SocketException;
