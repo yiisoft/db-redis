@@ -14,9 +14,9 @@ For license information check the [LICENSE](LICENSE.md)-file.
 
 Documentation is at [docs/guide/README.md](docs/guide/README.md).
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii-redis/v/stable.png)](https://packagist.org/packages/yiisoft/yii-redis)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii-redis/downloads.png)](https://packagist.org/packages/yiisoft/yii-redis)
-[![Build Status](https://travis-ci.org/yiisoft/yii-redis.svg?branch=master)](https://travis-ci.org/yiisoft/yii-redis)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/db-redis/v/stable.png)](https://packagist.org/packages/yiisoft/db-redis)
+[![Total Downloads](https://poser.pugx.org/yiisoft/db-redis/downloads.png)](https://packagist.org/packages/yiisoft/db-redis)
+[![Build Status](https://travis-ci.org/yiisoft/db-redis.svg?branch=master)](https://travis-ci.org/yiisoft/db-redis)
 
 
 Requirements
