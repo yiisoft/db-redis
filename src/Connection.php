@@ -237,7 +237,7 @@ class Connection extends Component implements ConnectionInterface
     /**
      * @event Event an event that is triggered after a DB connection is established
      */
-    const EVENT_AFTER_OPEN = 'afterOpen';
+    const EVENT_AFTER_OPEN = 'after.open';
 
     /**
      * @var string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
@@ -542,7 +542,7 @@ class Connection extends Component implements ConnectionInterface
             return;
         }
         $connection = ($this->unixSocket ?: $this->hostname . ':' . $this->port) . ', database=' . $this->database;
-        Yii::info('Opening redis DB connection: ' . $connection, __METHOD__);
+        Yii::debug('Opening redis DB connection: ' . $connection, __METHOD__);
         $this->_socket = @stream_socket_client(
             $this->unixSocket ? 'unix://' . $this->unixSocket : 'tcp://' . $this->hostname . ':' . $this->port,
             $errorNumber,
@@ -562,6 +562,7 @@ class Connection extends Component implements ConnectionInterface
             }
             $this->initConnection();
         } else {
+            Yii::error("Failed to open redis DB connection ($connection): $errorNumber - $errorDescription", __CLASS__);
             $message = YII_DEBUG ? "Failed to open redis DB connection ($connection): $errorNumber - $errorDescription" : 'Failed to open DB connection.';
             throw new Exception($message, $errorDescription, $errorNumber);
         }
