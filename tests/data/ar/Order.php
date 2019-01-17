@@ -1,6 +1,6 @@
 <?php
 
-namespace yiiunit\extensions\redis\data\ar;
+namespace yii\db\redis\tests\data\ar;
 
 /**
  * Order
@@ -32,96 +32,96 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getCustomer()
     {
-        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+        return $this->hasOne(Customer::class, ['id' => 'customer_id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItems()
     {
-        return $this->hasMany(OrderItem::className(), ['order_id' => 'id']);
+        return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItems()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItems', function ($q) {
                 // additional query configuration
             });
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsIndexed()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItems')->indexBy('id');
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsWithNullFK()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItemsWithNullFK');
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItemsWithNullFK()
     {
-        return $this->hasMany(OrderItemWithNullFK::className(), ['order_id' => 'id']);
+        return $this->hasMany(OrderItemWithNullFK::class, ['order_id' => 'id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsInOrder1()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItems', function ($q) {
                 $q->orderBy(['subtotal' => SORT_ASC]);
             })->orderBy('name');
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItemsInOrder2()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItems', function ($q) {
                 $q->orderBy(['subtotal' => SORT_DESC]);
             })->orderBy('name');
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getBooks()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItems')
             ->where(['category_id' => 1]);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getBooksWithNullFK()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+        return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItemsWithNullFK')
             ->where(['category_id' => 1]);
     }

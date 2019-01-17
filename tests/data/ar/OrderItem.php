@@ -1,6 +1,6 @@
 <?php
 
-namespace yiiunit\extensions\redis\data\ar;
+namespace yii\db\redis\tests\data\ar;
 
 /**
  * Class OrderItem
@@ -32,18 +32,18 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrder()
     {
-        return $this->hasOne(Order::className(), ['id' => 'order_id']);
+        return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getItem()
     {
-        return $this->hasOne(Item::className(), ['id' => 'item_id']);
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

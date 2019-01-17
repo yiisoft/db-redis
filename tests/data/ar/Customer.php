@@ -1,8 +1,8 @@
 <?php
 
-namespace yiiunit\extensions\redis\data\ar;
+namespace yii\db\redis\tests\data\ar;
 
-use yiiunit\extensions\redis\ActiveRecordTest;
+use yii\db\redis\tests\ActiveRecordTest;
 
 /**
  * Customer
@@ -37,51 +37,51 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrders()
     {
-        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+        return $this->hasMany(Order::class, ['customer_id' => 'id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getExpensiveOrders()
     {
-        return $this->hasMany(Order::className(), ['customer_id' => 'id'])->andWhere("tonumber(redis.call('HGET','order' .. ':a:' .. pk, 'total')) > 50");
+        return $this->hasMany(Order::class, ['customer_id' => 'id'])->andWhere("tonumber(redis.call('HGET','order' .. ':a:' .. pk, 'total')) > 50");
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getExpensiveOrdersWithNullFK()
     {
-        return $this->hasMany(OrderWithNullFK::className(), ['customer_id' => 'id'])->andWhere("tonumber(redis.call('HGET','order' .. ':a:' .. pk, 'total')) > 50");
+        return $this->hasMany(OrderWithNullFK::class, ['customer_id' => 'id'])->andWhere("tonumber(redis.call('HGET','order' .. ':a:' .. pk, 'total')) > 50");
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrdersWithNullFK()
     {
-        return $this->hasMany(OrderWithNullFK::className(), ['customer_id' => 'id']);
+        return $this->hasMany(OrderWithNullFK::class, ['customer_id' => 'id']);
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrdersWithItems()
     {
-        return $this->hasMany(Order::className(), ['customer_id' => 'id'])->with('orderItems');
+        return $this->hasMany(Order::class, ['customer_id' => 'id'])->with('orderItems');
     }
 
     /**
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\db\redis\ActiveQuery
      */
     public function getOrderItems()
     {
-        return $this->hasMany(Item::className(), ['id' => 'item_id'])->via('orders');
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('orders');
     }
 
     /**

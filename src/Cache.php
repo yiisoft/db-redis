@@ -5,9 +5,9 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
-use Yii;
+use yii\helpers\Yii;
 use yii\di\Instance;
 
 /**
@@ -27,15 +27,13 @@ use yii\di\Instance;
  *
  * ~~~
  * [
- *     'components' => [
- *         'cache' => [
- *             'class' => 'yii\redis\Cache',
- *             'redis' => [
- *                 'hostname' => 'localhost',
- *                 'port' => 6379,
- *                 'database' => 0,
- *             ]
- *         ],
+ *     'cache' => [
+ *         '__class' => \yii\db\redis\Cache::class,
+ *         'redis' => [
+ *             'hostname' => 'localhost',
+ *             'port' => 6379,
+ *             'database' => 0,
+ *         ]
  *     ],
  * ]
  * ~~~
@@ -44,11 +42,9 @@ use yii\di\Instance;
  *
  * ~~~
  * [
- *     'components' => [
- *         'cache' => [
- *             'class' => 'yii\redis\Cache',
- *             // 'redis' => 'redis' // id of the connection application component
- *         ],
+ *     'cache' => [
+ *         '__class' => \yii\db\redis\Cache::class,
+ *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]
  * ~~~
@@ -59,17 +55,15 @@ use yii\di\Instance;
  *
  * ~~~
  * [
- *     'components' => [
- *         'cache' => [
- *             'class' => 'yii\redis\Cache',
- *             'enableReplicas' => true,
- *             'replicas' => [
- *                 // config for replica redis connections, (default class will be yii\redis\Connection if not provided)
- *                 // you can optionally put in master as hostname as well, as all GET operation will use replicas
- *                 'redis',//id of Redis [[Connection]] Component
- *                 ['hostname' => 'redis-slave-002.xyz.0001.apse1.cache.amazonaws.com'],
- *                 ['hostname' => 'redis-slave-003.xyz.0001.apse1.cache.amazonaws.com'],
- *             ],
+ *     'cache' => [
+ *         '__class' => \yii\db\redis\Cache::class,
+ *         'enableReplicas' => true,
+ *         'replicas' => [
+ *             // config for replica redis connections, (default class will be yii\db\redis\Connection if not provided)
+ *             // you can optionally put in master as hostname as well, as all GET operation will use replicas
+ *             'redis',//id of Redis [[Connection]] Component
+ *             ['hostname' => 'redis-slave-002.xyz.0001.apse1.cache.amazonaws.com'],
+ *             ['hostname' => 'redis-slave-003.xyz.0001.apse1.cache.amazonaws.com'],
  *         ],
  *     ],
  * ]
@@ -78,7 +72,7 @@ use yii\di\Instance;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  */
-class Cache extends \yii\caching\Cache
+class Cache extends \yii\cache\SimpleCache
 {
     /**
      * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
@@ -97,7 +91,7 @@ class Cache extends \yii\caching\Cache
     /**
      * @var array the Redis [[Connection]] configurations for redis replicas.
      * Each entry is a class configuration, which will be used to instantiate a replica connection.
-     * The default class is [[Connection|yii\redis\Connection]]. You should at least provide a hostname.
+     * The default class is [[Connection|yii\db\redis\Connection]]. You should at least provide a hostname.
      *
      * Configuration example:
      *
@@ -123,12 +117,13 @@ class Cache extends \yii\caching\Cache
     /**
      * Initializes the redis Cache component.
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
-     * @throws \yii\base\InvalidConfigException if [[redis]] is invalid.
+     * @throws \yii\exceptions\InvalidConfigException if [[redis]] is invalid.
      */
-    public function init()
+    public function __construct(Connection $redis, $serializer = null)
     {
-        parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::className());
+        parent::__construct($serializer);
+
+        $this->redis = $redis;
     }
 
     /**
@@ -157,7 +152,7 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function getValues($keys)
+    protected function getValues($keys): array
     {
         $response = $this->getReplica()->executeCommand('MGET', $keys);
         $result = [];
@@ -172,21 +167,21 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function setValue($key, $value, $expire)
+    protected function setValue($key, $value, $ttl): bool
     {
-        if ($expire == 0) {
+        if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value]);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
 
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $expire]);
+            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl]);
         }
     }
 
     /**
      * @inheritdoc
      */
-    protected function setValues($data, $expire)
+    protected function setValues($data, $ttl): bool
     {
         $args = [];
         foreach ($data as $key => $value) {
@@ -195,15 +190,15 @@ class Cache extends \yii\caching\Cache
         }
 
         $failedKeys = [];
-        if ($expire == 0) {
+        if ($ttl == 0) {
             $this->redis->executeCommand('MSET', $args);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
             $this->redis->executeCommand('MULTI');
             $this->redis->executeCommand('MSET', $args);
             $index = [];
             foreach ($data as $key => $value) {
-                $this->redis->executeCommand('PEXPIRE', [$key, $expire]);
+                $this->redis->executeCommand('PEXPIRE', [$key, $ttl]);
                 $index[] = $key;
             }
             $result = $this->redis->executeCommand('EXEC');
@@ -215,27 +210,28 @@ class Cache extends \yii\caching\Cache
             }
         }
 
-        return $failedKeys;
+        // FIXME: Where do we access failed keys from ?
+        return count($failedKeys) === 0;
     }
 
     /**
      * @inheritdoc
      */
-    protected function addValue($key, $value, $expire)
+    protected function addValue($key, $value, $ttl)
     {
-        if ($expire == 0) {
+        if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value, 'NX']);
         } else {
-            $expire = (int) ($expire * 1000);
+            $ttl = (int) ($ttl * 1000);
 
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $expire, 'NX']);
+            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl, 'NX']);
         }
     }
 
     /**
      * @inheritdoc
      */
-    protected function deleteValue($key)
+    protected function deleteValue($key): bool
     {
         return (bool) $this->redis->executeCommand('DEL', [$key]);
     }
@@ -243,7 +239,7 @@ class Cache extends \yii\caching\Cache
     /**
      * @inheritdoc
      */
-    protected function flushValues()
+    public function clear()
     {
         return $this->redis->executeCommand('FLUSHDB');
     }
@@ -253,7 +249,7 @@ class Cache extends \yii\caching\Cache
      * defined in this instance. Only used in getValue() and getValues().
      * @since 2.0.8
      * @return array|string|Connection
-     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\exceptions\InvalidConfigException
      */
     protected function getReplica()
     {
@@ -272,7 +268,7 @@ class Cache extends \yii\caching\Cache
         $replicas = $this->replicas;
         shuffle($replicas);
         $config = array_shift($replicas);
-        $this->_replica = Instance::ensure($config, Connection::className());
+        $this->_replica = Yii::ensureObject($config, Connection::class);
         return $this->_replica;
     }
 }

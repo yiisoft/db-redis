@@ -1,10 +1,10 @@
 <?php
 
-namespace yiiunit\extensions\redis;
+namespace yii\db\redis\tests;
 
-use Yii;
-use yii\redis\Connection;
-use yii\redis\Mutex;
+use yii\helpers\Yii;
+use yii\db\redis\Connection;
+use yii\db\redis\Mutex;
 
 /**
  * Class for testing redis mutex
@@ -62,8 +62,8 @@ class RedisMutexTest extends TestCase
     }
 
     /**
-     * @covers \yii\redis\Mutex::acquireLock
-     * @covers \yii\redis\Mutex::releaseLock
+     * @covers \yii\db\redis\Mutex::acquireLock
+     * @covers \yii\db\redis\Mutex::releaseLock
      * @dataProvider acquireTimeoutProvider
      */
     public function testConcurentMutexAcquireAndRelease($timeout, $canAcquireAfterTimeout, $lockIsReleased)
@@ -109,17 +109,18 @@ class RedisMutexTest extends TestCase
         }
 
         $connection = new Connection($params);
-        $this->mockApplication(['components' => ['redis' => $connection]]);
+        $this->container->set('redis', $connection);
+        $this->mockApplication();
     }
 
     /**
      * @return Mutex
-     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\exceptions\InvalidConfigException
      */
     protected function createMutex()
     {
         return Yii::createObject([
-            'class' => Mutex::className(),
+            '__class' => Mutex::class,
             'expire' => 1.5,
             'keyPrefix' => static::$mutexPrefix
         ]);
@@ -139,11 +140,11 @@ class RedisMutexTest extends TestCase
 
     protected function assertMutexKeyInRedis()
     {
-        $this->assertNotNull(Yii::$app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
+        $this->assertNotNull($this->app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
     }
 
     protected function assertMutexKeyNotInRedis()
     {
-        $this->assertNull(Yii::$app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
+        $this->assertNull($this->app->redis->executeCommand('GET', [$this->getKey(static::$mutexName)]));
     }
 }

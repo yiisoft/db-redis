@@ -1,16 +1,16 @@
 <?php
 
-namespace yiiunit\extensions\redis;
+namespace yii\db\redis\tests;
 
-use yii\base\InvalidConfigException;
-use yii\redis\Cache;
-use yii\redis\Connection;
-use yiiunit\framework\caching\CacheTestCase;
+use yii\exceptions\InvalidConfigException;
+use yii\db\redis\Cache;
+use yii\db\redis\Connection;
+use yii\cache\tests\unit\CacheTestCase;
 
 /**
  * Class for testing redis cache backend
  * @group redis
- * @group caching
+ * @group cache
  */
 class RedisCacheTest extends CacheTestCase
 {
@@ -31,10 +31,11 @@ class RedisCacheTest extends CacheTestCase
 //            $this->markTestSkipped('No redis server running at ' . $connection->hostname . ':' . $connection->port . ' : ' . $errorNumber . ' - ' . $errorDescription);
 //        }
 
-        $this->mockApplication(['components' => ['redis' => $connection]]);
+        $this->container->set('redis', $connection);
+        $this->mockApplication(); //['components' => ['redis' => $connection]]);
 
         if ($this->_cacheInstance === null) {
-            $this->_cacheInstance = new Cache();
+            $this->_cacheInstance = new Cache($connection);
         }
 
         return $this->_cacheInstance;
@@ -42,7 +43,7 @@ class RedisCacheTest extends CacheTestCase
 
     protected function resetCacheInstance()
     {
-        $this->getCacheInstance()->flush();
+        $this->getCacheInstance()->clear();
         $this->_cacheInstance = null;
     }
 
@@ -109,7 +110,7 @@ class RedisCacheTest extends CacheTestCase
 //            $this->assertTrue($cache->get($key) === false); // do not display 100KB in terminal if this fails :)
             $cache->set($key, $data);
         }
-        $values = $cache->multiGet(array_keys($keys));
+        $values = $cache->getMultiple(array_keys($keys));
         foreach ($keys as $key => $value) {
             $this->assertArrayHasKey($key, $values);
             $this->assertSame($values[$key], $value);

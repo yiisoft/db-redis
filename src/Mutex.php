@@ -5,11 +5,11 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
-use Yii;
-use yii\base\InvalidConfigException;
+use yii\exceptions\InvalidConfigException;
 use yii\di\Instance;
+use yii\helpers\Yii;
 
 /**
  * Redis Mutex implements a mutex component using [redis](http://redis.io/) as the storage medium.
@@ -23,15 +23,13 @@ use yii\di\Instance;
  *
  * ```php
  * [
- *     'components' => [
- *         'mutex' => [
- *             'class' => 'yii\redis\Mutex',
- *             'redis' => [
- *                 'hostname' => 'localhost',
- *                 'port' => 6379,
- *                 'database' => 0,
- *             ]
- *         ],
+ *     'mutex' => [
+ *         '__class' => \yii\db\redis\Mutex::class,
+ *         'redis' => [
+ *             'hostname' => 'localhost',
+ *             'port' => 6379,
+ *             'database' => 0,
+ *         ]
  *     ],
  * ]
  * ```
@@ -40,11 +38,9 @@ use yii\di\Instance;
  *
  * ```php
  * [
- *     'components' => [
- *         'mutex' => [
- *             'class' => 'yii\redis\Mutex',
- *             // 'redis' => 'redis' // id of the connection application component
- *         ],
+ *     'mutex' => [
+ *         'class' => \yii\db\redis\Mutex::class,
+ *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]
  * ```
@@ -89,12 +85,14 @@ class Mutex extends \yii\mutex\Mutex
      * This method will initialize the [[redis]] property to make sure it refers to a valid redis connection.
      * @throws InvalidConfigException if [[redis]] is invalid.
      */
-    public function init()
+    public function __construct(Connection $redis, $autoRelease = true)
     {
-        parent::init();
-        $this->redis = Instance::ensure($this->redis, Connection::className());
+        parent::__construct($autoRelease);
+        $this->redis = $redis;
+
+        // FIXME: needs to be set elsewhere
         if ($this->keyPrefix === null) {
-            $this->keyPrefix = substr(md5(Yii::$app->id), 0, 5);
+            $this->keyPrefix = substr(md5(Yii::getApp()->id), 0, 5);
         }
     }
 
@@ -108,7 +106,7 @@ class Mutex extends \yii\mutex\Mutex
     protected function acquireLock($name, $timeout = 0)
     {
         $key = $this->calculateKey($name);
-        $value = Yii::$app->security->generateRandomString(20);
+        $value = Yii::getApp()->security->generateRandomString(20);
         $waitTime = 0;
         while (!$this->redis->executeCommand('SET', [$key, $value, 'NX', 'PX', (int) ($this->expire * 1000)])) {
             $waitTime++;

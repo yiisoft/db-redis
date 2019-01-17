@@ -1,6 +1,6 @@
 <?php
 
-namespace yiiunit\extensions\redis\data\ar;
+namespace yii\db\redis\tests\data\ar;
 
 /**
  * Class Item

@@ -5,14 +5,14 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\redis;
+namespace yii\db\redis;
 
 use yii\base\Component;
-use yii\base\InvalidParamException;
-use yii\base\NotSupportedException;
-use yii\db\ActiveQueryInterface;
-use yii\db\ActiveQueryTrait;
-use yii\db\ActiveRelationTrait;
+use yii\exceptions\InvalidParamException;
+use yii\exceptions\NotSupportedException;
+use yii\activerecord\ActiveQueryInterface;
+use yii\activerecord\ActiveQueryTrait;
+use yii\activerecord\ActiveRelationTrait;
 use yii\db\QueryTrait;
 
 /**
@@ -91,7 +91,6 @@ class ActiveQuery extends Component implements ActiveQueryInterface
     public function __construct($modelClass, $config = [])
     {
         $this->modelClass = $modelClass;
-        parent::__construct($config);
     }
 
     /**
@@ -417,8 +416,8 @@ class ActiveQuery extends Component implements ActiveQueryInterface
      * @param string $type the type of the script to generate
      * @param string $columnName
      * @return array|bool|null|string
-     * @throws \yii\base\InvalidParamException
-     * @throws \yii\base\NotSupportedException
+     * @throws \yii\exceptions\InvalidParamException
+     * @throws \yii\exceptions\NotSupportedException
      */
     private function findByPk($db, $type, $columnName = null)
     {

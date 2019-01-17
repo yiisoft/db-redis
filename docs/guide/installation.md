@@ -15,14 +15,14 @@ composer require --prefer-dist yiisoft/yii2-redis
 
 ## Configuring application
 
-To use this extension, you have to configure the [[yii\redis\Connection|Connection]] class in your application configuration:
+To use this extension, you have to configure the [[yii\db\redis\Connection|Connection]] class in your application configuration:
 
 ```php
 return [
     //....
     'components' => [
         'redis' => [
-            'class' => 'yii\redis\Connection',
+            'class' => 'yii\db\redis\Connection',
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,
@@ -38,4 +38,4 @@ Yii::$app->redis->set('mykey', 'some value');
 echo Yii::$app->redis->get('mykey');
 ```
 
-See [[yii\redis\Connection]] for a full list of available methods.
+See [[yii\db\redis\Connection]] for a full list of available methods.

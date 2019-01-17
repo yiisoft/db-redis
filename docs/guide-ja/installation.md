@@ -25,14 +25,14 @@ php composer.phar require --prefer-dist yiisoft/yii2-redis
 
 ## アプリケーションを構成する
 
-このエクステンションを使用するためには、アプリケーション構成情報で [[yii\redis\Connection|Connection]] クラスを構成する必要があります。
+このエクステンションを使用するためには、アプリケーション構成情報で [[yii\db\redis\Connection|Connection]] クラスを構成する必要があります。
 
 ```php
 return [
     //....
     'components' => [
         'redis' => [
-            'class' => 'yii\redis\Connection',
+            'class' => 'yii\db\redis\Connection',
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,
@@ -48,4 +48,4 @@ Yii::$app->redis->set('mykey', 'some value');
 echo Yii::$app->redis->get('mykey');
 ```
 
-利用可能なメソッドの一覧は [[yii\redis\Connection]] を参照して下さい。
+利用可能なメソッドの一覧は [[yii\db\redis\Connection]] を参照して下さい。
