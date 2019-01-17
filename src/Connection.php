@@ -10,6 +10,7 @@ namespace yii\redis;
 use yii\base\Component;
 use yii\db\Exception;
 use yii\helpers\Inflector;
+use yii\helpers\Yii;
 
 /**
  * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.
@@ -235,7 +236,7 @@ class Connection extends Component
     /**
      * @event Event an event that is triggered after a DB connection is established
      */
-    const EVENT_AFTER_OPEN = 'afterOpen';
+    const EVENT_AFTER_OPEN = 'after.open';
 
     /**
      * @var string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
@@ -540,7 +541,7 @@ class Connection extends Component
             return;
         }
         $connection = ($this->unixSocket ?: $this->hostname . ':' . $this->port) . ', database=' . $this->database;
-        \Yii::trace('Opening redis DB connection: ' . $connection, __METHOD__);
+        Yii::debug('Opening redis DB connection: ' . $connection, __METHOD__);
         $this->_socket = @stream_socket_client(
             $this->unixSocket ? 'unix://' . $this->unixSocket : 'tcp://' . $this->hostname . ':' . $this->port,
             $errorNumber,
@@ -560,7 +561,7 @@ class Connection extends Component
             }
             $this->initConnection();
         } else {
-            \Yii::error("Failed to open redis DB connection ($connection): $errorNumber - $errorDescription", __CLASS__);
+            Yii::error("Failed to open redis DB connection ($connection): $errorNumber - $errorDescription", __CLASS__);
             $message = YII_DEBUG ? "Failed to open redis DB connection ($connection): $errorNumber - $errorDescription" : 'Failed to open DB connection.';
             throw new Exception($message, $errorDescription, $errorNumber);
         }
@@ -574,7 +575,7 @@ class Connection extends Component
     {
         if ($this->_socket !== false) {
             $connection = ($this->unixSocket ?: $this->hostname . ':' . $this->port) . ', database=' . $this->database;
-            \Yii::trace('Closing DB connection: ' . $connection, __METHOD__);
+            Yii::debug('Closing DB connection: ' . $connection, __METHOD__);
             try {
                 $this->executeCommand('QUIT');
             } catch (SocketException $e) {
@@ -670,14 +671,14 @@ class Connection extends Component
             $command .= '$' . mb_strlen($arg, '8bit') . "\r\n" . $arg . "\r\n";
         }
 
-        \Yii::trace("Executing Redis Command: {$name}", __METHOD__);
+        Yii::debug("Executing Redis Command: {$name}", __METHOD__);
         if ($this->retries > 0) {
             $tries = $this->retries;
             while ($tries-- > 0) {
                 try {
                     return $this->sendCommandInternal($command, $params);
                 } catch (SocketException $e) {
-                    \Yii::error($e, __METHOD__);
+                    Yii::error($e, __METHOD__);
                     // backup retries, fail on commands that fail inside here
                     $retries = $this->retries;
                     $this->retries = 0;
