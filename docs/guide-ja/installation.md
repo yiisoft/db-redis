@@ -12,13 +12,13 @@
 下記のコマンドを実行してください。
 
 ```
-php composer.phar require --prefer-dist yiisoft/yii2-redis
+php composer.phar require --prefer-dist yiisoft/db-redis
 ```
 
 または、あなたの `composer.json` ファイルの `require` セクションに、
 
 ```
-"yiisoft/yii2-redis": "~2.0.0"
+"yiisoft/db-redis": "~1.0.0"
 ```
 
 を追加してください。
