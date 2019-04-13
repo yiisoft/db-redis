@@ -11,7 +11,7 @@ use yii\db\redis\SocketException;
 /**
  * @group redis
  */
-class ConnectionTest extends TestCase
+class RedisConnectionTest extends TestCase
 {
     protected function tearDown()
     {
@@ -137,7 +137,9 @@ class ConnectionTest extends TestCase
 
         $this->assertTrue($db->ping());
         $this->assertCount(11, $logger->messages, 'log +1 ping command, and reconnection.'
-            . print_r(array_map(function($s) { return (string) $s; }, ArrayHelper::getColumn($logger->messages, 0)), true));
+            . print_r(array_map(function ($s) {
+                return (string) $s;
+            }, ArrayHelper::getColumn($logger->messages, 0)), true));
     }
 
     /**
@@ -151,7 +153,7 @@ class ConnectionTest extends TestCase
         $db = $this->getConnection(false);
         $db->retries = 2;
         $db->configSet('timeout', 1);
-        $db->on(Connection::EVENT_AFTER_OPEN, function() {
+        $db->on(Connection::EVENT_AFTER_OPEN, function () {
             // sleep 2 seconds after connect to make every command time out
             sleep(2);
         });
@@ -168,7 +170,9 @@ class ConnectionTest extends TestCase
         }
         $this->assertTrue($exception, 'SocketException should have been thrown.');
         $this->assertCount(14, $logger->messages, 'log +1 ping command, and reconnection.'
-            . print_r(array_map(function($s) { return (string) $s; }, ArrayHelper::getColumn($logger->messages, 0)), true));
+            . print_r(array_map(function ($s) {
+                return (string) $s;
+            }, ArrayHelper::getColumn($logger->messages, 0)), true));
     }
 
     /**
