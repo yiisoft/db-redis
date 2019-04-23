@@ -7,8 +7,8 @@
 
 namespace yii\db\redis;
 
-use yii\helpers\Yii;
 use yii\exceptions\InvalidConfigException;
+use yii\helpers\Yii;
 
 /**
  * Redis Session implements a session component using [redis](http://redis.io/) as the storage medium.

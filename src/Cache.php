@@ -7,8 +7,8 @@
 
 namespace yii\db\redis;
 
-use yii\helpers\Yii;
 use yii\di\Instance;
+use yii\helpers\Yii;
 
 /**
  * Redis Cache implements a cache application component based on [redis](http://redis.io/) key-value store.

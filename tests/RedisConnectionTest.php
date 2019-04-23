@@ -2,7 +2,7 @@
 
 namespace yii\db\redis\tests;
 
-use yii\helpers\ArrayHelper;
+use Yiisoft\Arrays\ArrayHelper;
 use yii\helpers\Yii;
 use Yii\Log\Logger;
 use yii\db\redis\Connection;

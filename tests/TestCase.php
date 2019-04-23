@@ -3,7 +3,7 @@
 namespace yii\db\redis\tests;
 
 use yii\di\Container;
-use yii\helpers\ArrayHelper;
+use Yiisoft\Arrays\ArrayHelper;
 use yii\db\redis\Connection;
 
 /**
