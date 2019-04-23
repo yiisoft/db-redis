@@ -7,13 +7,13 @@
 
 namespace yii\db\redis;
 
-use yii\base\Component;
-use yii\exceptions\InvalidParamException;
-use yii\exceptions\NotSupportedException;
 use yii\activerecord\ActiveQueryInterface;
 use yii\activerecord\ActiveQueryTrait;
 use yii\activerecord\ActiveRelationTrait;
+use yii\base\Component;
 use yii\db\QueryTrait;
+use yii\exceptions\InvalidParamException;
+use yii\exceptions\NotSupportedException;
 
 /**
  * ActiveQuery represents a query associated with an Active Record class.

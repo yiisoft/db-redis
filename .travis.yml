@@ -6,7 +6,6 @@ matrix:
   include:
   - php: 7.3
   - php: 7.2
-  - php: 7.1
     sudo: true
     dist: trusty
     group: edge
@@ -37,7 +36,7 @@ install:
 
 before_script:
   - |
-    if [ $TRAVIS_PHP_VERSION = '7.1' ]; then
+    if [ $TRAVIS_PHP_VERSION = '7.3' ]; then
       PHPUNIT_FLAGS="--coverage-clover=clover.xml"
     else
       phpenv config-rm xdebug.ini || return 0

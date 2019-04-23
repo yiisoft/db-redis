@@ -7,10 +7,10 @@
 
 namespace yii\db\redis;
 
-use yii\exceptions\InvalidParamException;
-use yii\exceptions\NotSupportedException;
 use yii\db\Exception;
 use yii\db\Expression;
+use yii\exceptions\InvalidParamException;
+use yii\exceptions\NotSupportedException;
 
 /**
  * LuaScriptBuilder builds lua scripts used for retrieving data from redis.

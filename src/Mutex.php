@@ -7,8 +7,8 @@
 
 namespace yii\db\redis;
 
-use yii\exceptions\InvalidConfigException;
 use yii\di\Instance;
+use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
 
 /**

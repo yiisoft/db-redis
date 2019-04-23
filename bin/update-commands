@@ -5,8 +5,8 @@
  * This scripts is used to update the PHPdoc annotations for redis commands in the Connection.php class.
  */
 
-use yii\helpers\Inflector;
 use yii\helpers\Console;
+use Yiisoft\Helpers\InflectorHelper;
 
 foreach([
     __DIR__ . '/../vendor/yiisoft/yii2/Yii.php',
@@ -73,7 +73,7 @@ $specialArgs = [
 
 $methods = [];
 foreach($commands as $name => $info) {
-    $name = lcfirst(Inflector::camelize($name));
+    $name = lcfirst(InflectorHelper::camelize($name));
     if (isset($specialArgs[$name])) {
         $arglist = $specialArgs[$name];
     } else {
@@ -86,9 +86,9 @@ foreach($commands as $name => $info) {
                 $arg = substr($arg, 1, -1);
                 return implode(', ', array_map(function($a) {return '$'.$a.' = null'; }, explode(' ', $arg)));
             } elseif (preg_match('~^(\[?)([\w-]+) \[\2 ...\](\]?)~', $arg, $m)) {
-                return '...$'. lcfirst(Inflector::camelize($m[2])) . 's';
+                return '...$'. lcfirst(InflectorHelper::camelize($m[2])) . 's';
             }
-            return '$' . lcfirst(Inflector::camelize($arg));
+            return '$' . lcfirst(InflectorHelper::camelize($arg));
         }, $info['args']));
     }
     $methods[] = " * @method mixed $name($arglist) " . $info['descr'] . '. <' . $info['url'] . '>';
