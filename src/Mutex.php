@@ -103,7 +103,7 @@ class Mutex extends \Yii\Mutex\Mutex
      * false immediately in case lock was already acquired.
      * @return bool lock acquiring result.
      */
-    protected function acquireLock($name, $timeout = 0)
+    protected function acquireLock(string $name, int $timeout = 0): bool
     {
         $key = $this->calculateKey($name);
         $value = Yii::getApp()->security->generateRandomString(20);
@@ -124,7 +124,7 @@ class Mutex extends \Yii\Mutex\Mutex
      * @param string $name of the lock to be released. This lock must already exist.
      * @return bool lock release result: `false` in case named lock was not found or Redis command failed.
      */
-    protected function releaseLock($name)
+    protected function releaseLock(string $name): bool
     {
         static $releaseLuaScript = <<<LUA
 if redis.call("GET",KEYS[1])==ARGV[1] then
@@ -140,10 +140,10 @@ LUA;
                 $this->_lockValues[$name]
             ])) {
             return false;
-        } else {
-            unset($this->_lockValues[$name]);
-            return true;
         }
+
+        unset($this->_lockValues[$name]);
+        return true;
     }
 
     /**
