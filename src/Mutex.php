@@ -45,14 +45,14 @@ use yii\helpers\Yii;
  * ]
  * ```
  *
- * @see \Yii\Mutex\Mutex
+ * @see \Yiisoft\Mutex\Mutex
  * @see http://redis.io/topics/distlock
  *
  * @author Sergey Makinen <sergey@makinen.ru>
  * @author Alexander Zhuravlev <axelhex@gmail.com>
  * @since 2.0.6
  */
-class Mutex extends \Yii\Mutex\Mutex
+class Mutex extends \Yiisoft\Mutex\Mutex
 {
     /**
      * @var int the number of seconds in which the lock will be auto released.
