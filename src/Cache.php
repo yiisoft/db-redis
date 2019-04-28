@@ -72,7 +72,7 @@ use yii\helpers\Yii;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  */
-class Cache extends \yii\cache\SimpleCache
+class Cache extends \Yiisoft\Cache\SimpleCache
 {
     /**
      * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].

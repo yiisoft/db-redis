@@ -5,7 +5,7 @@ namespace yii\db\redis\tests;
 use yii\exceptions\InvalidConfigException;
 use yii\db\redis\Cache;
 use yii\db\redis\Connection;
-use yii\cache\tests\unit\CacheTestCase;
+use Yiisoft\Cache\Tests\CacheTestCase;
 
 /**
  * Class for testing redis cache backend
