@@ -6,7 +6,7 @@
  */
 
 use yii\helpers\Console;
-use Yiisoft\Helpers\InflectorHelper;
+use Yiisoft\Inflector\InflectorHelper;
 
 foreach([
     __DIR__ . '/../vendor/yiisoft/yii2/Yii.php',

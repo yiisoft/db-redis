@@ -11,7 +11,7 @@ use yii\base\Component;
 use yii\db\ConnectionInterface;
 use yii\db\Exception;
 use yii\helpers\Yii;
-use Yiisoft\Helpers\InflectorHelper;
+use Yiisoft\Inflector\InflectorHelper;
 
 /**
  * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.

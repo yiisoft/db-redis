@@ -10,7 +10,7 @@ namespace yii\db\redis;
 use yii\activerecord\BaseActiveRecord;
 use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
-use Yiisoft\Helpers\InflectorHelper;
+use Yiisoft\Inflector\InflectorHelper;
 use Yiisoft\Strings\StringHelper;
 
 /**
