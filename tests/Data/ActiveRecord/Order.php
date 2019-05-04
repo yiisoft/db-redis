@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
 /**
  * Order
@@ -32,7 +32,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getCustomer()
     {
@@ -40,7 +40,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrderItems()
     {
@@ -48,7 +48,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItems()
     {
@@ -59,7 +59,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItemsIndexed()
     {
@@ -68,7 +68,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItemsWithNullFK()
     {
@@ -77,7 +77,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrderItemsWithNullFK()
     {
@@ -85,7 +85,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItemsInOrder1()
     {
@@ -96,7 +96,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItemsInOrder2()
     {
@@ -107,7 +107,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getBooks()
     {
@@ -117,7 +117,7 @@ class Order extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getBooksWithNullFK()
     {

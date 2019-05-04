@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
 use yii\di\Instance;
 use yii\helpers\Yii;
@@ -28,7 +28,7 @@ use yii\helpers\Yii;
  * ~~~
  * [
  *     'cache' => [
- *         '__class' => \yii\db\redis\Cache::class,
+ *         '__class' => \Yiisoft\Db\Redis\Cache::class,
  *         'redis' => [
  *             'hostname' => 'localhost',
  *             'port' => 6379,
@@ -43,7 +43,7 @@ use yii\helpers\Yii;
  * ~~~
  * [
  *     'cache' => [
- *         '__class' => \yii\db\redis\Cache::class,
+ *         '__class' => \Yiisoft\Db\Redis\Cache::class,
  *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]
@@ -56,10 +56,10 @@ use yii\helpers\Yii;
  * ~~~
  * [
  *     'cache' => [
- *         '__class' => \yii\db\redis\Cache::class,
+ *         '__class' => \Yiisoft\Db\Redis\Cache::class,
  *         'enableReplicas' => true,
  *         'replicas' => [
- *             // config for replica redis connections, (default class will be yii\db\redis\Connection if not provided)
+ *             // config for replica redis connections, (default class will be Yiisoft\Db\Redis\Connection if not provided)
  *             // you can optionally put in master as hostname as well, as all GET operation will use replicas
  *             'redis',//id of Redis [[Connection]] Component
  *             ['hostname' => 'redis-slave-002.xyz.0001.apse1.cache.amazonaws.com'],
@@ -91,7 +91,7 @@ class Cache extends \Yiisoft\Cache\SimpleCache
     /**
      * @var array the Redis [[Connection]] configurations for redis replicas.
      * Each entry is a class configuration, which will be used to instantiate a replica connection.
-     * The default class is [[Connection|yii\db\redis\Connection]]. You should at least provide a hostname.
+     * The default class is [[Connection|Yiisoft\Db\Redis\Connection]]. You should at least provide a hostname.
      *
      * Configuration example:
      *

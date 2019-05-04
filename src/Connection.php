@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
 use yii\base\Component;
 use yii\db\ConnectionInterface;

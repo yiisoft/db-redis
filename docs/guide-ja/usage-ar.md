@@ -3,16 +3,16 @@
 
 Yii のアクティブレコードの使用方法に関する一般的な情報については、[ガイド](https://www.yiiframework.com/doc/guide/2.0/ja/db-active-record) を参照してください。
 
-redis の アクティブレコード・クラスを定義するためには、[[yii\db\redis\ActiveRecord]] から拡張して、最低限、
+redis の アクティブレコード・クラスを定義するためには、[[Yiisoft\Db\Redis\ActiveRecord]] から拡張して、最低限、
 レコードの属性を定義する `attributes()` メソッドを実装する必要があります。
-プライマリ・キーは [[yii\db\redis\ActiveRecord::primaryKey()]] によって定義することが出来ますが、指定されない場合のデフォルト値は `id` となります。
+プライマリ・キーは [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]] によって定義することが出来ますが、指定されない場合のデフォルト値は `id` となります。
 この primaryKey は属性の中に含まれていなければなりませんので、独自のプライマリ・キーを指定しない場合は、
 `id` という属性を定義することを忘れないようにしなければなりません。
 
 下記は `Customer` と呼ばれるモデルの例です。
 
 ```php
-class Customer extends \yii\db\redis\ActiveRecord
+class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 {
     /**
      * @return array このレコードの属性のリスト

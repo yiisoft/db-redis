@@ -1,10 +1,10 @@
 <?php
 
-namespace yii\db\redis\tests;
+namespace Yiisoft\Db\Redis\Tests;
 
 use yii\exceptions\InvalidConfigException;
-use yii\db\redis\Cache;
-use yii\db\redis\Connection;
+use Yiisoft\Db\Redis\Cache;
+use Yiisoft\Db\Redis\Connection;
 use Yiisoft\Cache\Tests\CacheTestCase;
 
 /**

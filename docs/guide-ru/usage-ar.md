@@ -3,14 +3,14 @@
 
 Для получения общей информации о том, как использовать Yii ActiveRecord, обратитесь к
 [руководству](https://github.com/yiisoft/yii2/blob/master/docs/guide/db-active-record.md).
-Для определения redis ActiveRecord класс записи должен расширяться от класса [[yii\db\redis\ActiveRecord]] и реализовывать хотя бы метод `attributes()` для определения атрибутов записи.
-Первичный ключ может быть определен с помощью [[yii\db\redis\ActiveRecord::primaryKey()]], который по умолчанию имеет значение `id`.
+Для определения redis ActiveRecord класс записи должен расширяться от класса [[Yiisoft\Db\Redis\ActiveRecord]] и реализовывать хотя бы метод `attributes()` для определения атрибутов записи.
+Первичный ключ может быть определен с помощью [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]], который по умолчанию имеет значение `id`.
 Первичный ключ должен быть частью атрибутов, поэтому убедитесь, что атрибут `id` определен, если вы не указали свой собственный первичный ключ.
 
 Ниже приведен пример модели `Customer`:
 
 ```php
-class Customer extends \yii\db\redis\ActiveRecord
+class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 {
     /**
      * @return array the list of attributes for this record

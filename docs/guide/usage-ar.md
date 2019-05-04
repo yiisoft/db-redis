@@ -3,16 +3,16 @@ Using the ActiveRecord
 
 For general information on how to use yii's ActiveRecord please refer to the [guide](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
 
-For defining a redis ActiveRecord class your record class needs to extend from [[yii\db\redis\ActiveRecord]] and
+For defining a redis ActiveRecord class your record class needs to extend from [[Yiisoft\Db\Redis\ActiveRecord]] and
 implement at least the `attributes()` method to define the attributes of the record.
-A primary key can be defined via [[yii\db\redis\ActiveRecord::primaryKey()]] which defaults to `id` if not specified.
+A primary key can be defined via [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]] which defaults to `id` if not specified.
 The primaryKey needs to be part of the attributes so make sure you have an `id` attribute defined if you do
 not specify your own primary key.
 
 The following is an example model called `Customer`:
 
 ```php
-class Customer extends \yii\db\redis\ActiveRecord
+class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 {
     /**
      * @return array the list of attributes for this record

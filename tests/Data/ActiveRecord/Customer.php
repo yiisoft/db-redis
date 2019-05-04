@@ -1,8 +1,8 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
-use yii\db\redis\tests\ActiveRecordTest;
+use Yiisoft\Db\Redis\Tests\ActiveRecordTest;
 
 /**
  * Customer
@@ -37,7 +37,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrders()
     {
@@ -45,7 +45,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getExpensiveOrders()
     {
@@ -53,7 +53,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getExpensiveOrdersWithNullFK()
     {
@@ -61,7 +61,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrdersWithNullFK()
     {
@@ -69,7 +69,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrdersWithItems()
     {
@@ -77,7 +77,7 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrderItems()
     {

@@ -3,16 +3,16 @@
 
 对于如何使用 yii 的活动记录一般信息请参阅 [指南](https://github.com/yiisoft/yii2/blob/master/docs/guide/active-record.md)。
 
-定义一个 redis 活动记录类，你的记录类需要继承自 [[yii\db\redis\ActiveRecord]] 并且
+定义一个 redis 活动记录类，你的记录类需要继承自 [[Yiisoft\Db\Redis\ActiveRecord]] 并且
 至少实现 `attributes()` 方法来定义记录的属性。
-一个没有指定默认值，默认为 `id` 的主键可以通过 [[yii\db\redis\ActiveRecord::primaryKey()]] 定义。
+一个没有指定默认值，默认为 `id` 的主键可以通过 [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]] 定义。
 主键是属性中必要的一部分，所以请确保你有一个 `id` 属性定义的，
 如果你没有指定自己的主键。
 
 以下是一个 `Customer` 的实例模型：
 
 ```php
-class Customer extends \yii\db\redis\ActiveRecord
+class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 {
     /**
      * @return array 此记录的属性列表

@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
 use yii\di\Instance;
 use yii\exceptions\InvalidConfigException;
@@ -24,7 +24,7 @@ use yii\helpers\Yii;
  * ```php
  * [
  *     'mutex' => [
- *         '__class' => \yii\db\redis\Mutex::class,
+ *         '__class' => \Yiisoft\Db\Redis\Mutex::class,
  *         'redis' => [
  *             'hostname' => 'localhost',
  *             'port' => 6379,
@@ -39,7 +39,7 @@ use yii\helpers\Yii;
  * ```php
  * [
  *     'mutex' => [
- *         'class' => \yii\db\redis\Mutex::class,
+ *         'class' => \Yiisoft\Db\Redis\Mutex::class,
  *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]
