@@ -7,8 +7,8 @@
 
 namespace Yiisoft\Db\Redis;
 
-use yii\di\Instance;
 use yii\helpers\Yii;
+use Yiisoft\Cache\SimpleCache;
 
 /**
  * Redis Cache implements a cache application component based on [redis](http://redis.io/) key-value store.
@@ -72,7 +72,7 @@ use yii\helpers\Yii;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  */
-class Cache extends \Yiisoft\Cache\SimpleCache
+class Cache extends SimpleCache
 {
     /**
      * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
@@ -127,26 +127,13 @@ class Cache extends \Yiisoft\Cache\SimpleCache
     }
 
     /**
-     * Checks whether a specified key exists in the cache.
-     * This can be faster than getting the value from the cache if the data is big.
-     * Note that this method does not check whether the dependency associated
-     * with the cached data, if there is any, has changed. So a call to [[get]]
-     * may return false while exists returns true.
-     * @param mixed $key a key identifying the cached value. This can be a simple string or
-     * a complex data structure consisting of factors representing the key.
-     * @return bool true if a value exists in cache, false if the value is not in the cache or expired.
-     */
-    public function exists($key)
-    {
-        return (bool) $this->redis->executeCommand('EXISTS', [$this->buildKey($key)]);
-    }
-
-    /**
      * @inheritdoc
      */
     protected function getValue($key)
     {
-        return $this->getReplica()->executeCommand('GET', [$key]);
+        $value = $this->getReplica()->executeCommand('GET', [$key]);
+
+        return $value ?? false;
     }
 
     /**
@@ -171,11 +158,11 @@ class Cache extends \Yiisoft\Cache\SimpleCache
     {
         if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value]);
-        } else {
-            $ttl = (int) ($ttl * 1000);
-
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl]);
         }
+
+        $ttl = (int) ($ttl * 1000);
+
+        return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl]);
     }
 
     /**
@@ -221,11 +208,11 @@ class Cache extends \Yiisoft\Cache\SimpleCache
     {
         if ($ttl == 0) {
             return (bool) $this->redis->executeCommand('SET', [$key, $value, 'NX']);
-        } else {
-            $ttl = (int) ($ttl * 1000);
-
-            return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl, 'NX']);
         }
+
+        $ttl = (int) ($ttl * 1000);
+
+        return (bool) $this->redis->executeCommand('SET', [$key, $value, 'PX', $ttl, 'NX']);
     }
 
     /**

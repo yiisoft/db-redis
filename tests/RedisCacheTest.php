@@ -2,7 +2,6 @@
 
 namespace Yiisoft\Db\Redis\Tests;
 
-use yii\exceptions\InvalidConfigException;
 use Yiisoft\Db\Redis\Cache;
 use Yiisoft\Db\Redis\Connection;
 use Yiisoft\Cache\Tests\CacheTestCase;
@@ -17,7 +16,8 @@ class RedisCacheTest extends CacheTestCase
     private $_cacheInstance;
 
     /**
-     * @return Cache
+     * @return \Yiisoft\Cache\Cache
+     * @throws \yii\exceptions\InvalidConfigException
      */
     protected function getCacheInstance()
     {
@@ -26,7 +26,8 @@ class RedisCacheTest extends CacheTestCase
         if ($params === null) {
             $this->markTestSkipped('No redis server connection configured.');
         }
-        $connection = new Connection($params);
+
+        $connection = new Connection();
 //        if (!@stream_socket_client($connection->hostname . ':' . $connection->port, $errorNumber, $errorDescription, 0.5)) {
 //            $this->markTestSkipped('No redis server running at ' . $connection->hostname . ':' . $connection->port . ' : ' . $errorNumber . ' - ' . $errorDescription);
 //        }
@@ -35,7 +36,7 @@ class RedisCacheTest extends CacheTestCase
         $this->mockApplication(); //['components' => ['redis' => $connection]]);
 
         if ($this->_cacheInstance === null) {
-            $this->_cacheInstance = new Cache($connection);
+            $this->_cacheInstance = new \Yiisoft\Cache\Cache(new Cache($connection));
         }
 
         return $this->_cacheInstance;
@@ -55,18 +56,18 @@ class RedisCacheTest extends CacheTestCase
         usleep(100000);
         $this->assertEquals('expire_test_ms', $cache->get('expire_test_ms'));
         usleep(300000);
-        $this->assertFalse($cache->get('expire_test_ms'));
+        $this->assertNull($cache->get('expire_test_ms'));
     }
 
     public function testExpireAddMilliseconds()
     {
         $cache = $this->getCacheInstance();
 
-        $this->assertTrue($cache->add('expire_testa_ms', 'expire_testa_ms', 0.2));
+        $this->assertTrue($cache->add('expire_testa_ms', 'expire_testa_value', 0.2));
         usleep(100000);
-        $this->assertEquals('expire_testa_ms', $cache->get('expire_testa_ms'));
+        $this->assertEquals('expire_testa_value', $cache->get('expire_testa_ms'));
         usleep(300000);
-        $this->assertFalse($cache->get('expire_testa_ms'));
+        $this->assertNull($cache->get('expire_testa_ms'));
     }
 
     /**
@@ -80,7 +81,7 @@ class RedisCacheTest extends CacheTestCase
         $data = str_repeat('XX', 8192); // http://www.php.net/manual/en/function.fread.php
         $key = 'bigdata1';
 
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $data);
         $this->assertSame($cache->get($key), $data);
 
@@ -88,7 +89,7 @@ class RedisCacheTest extends CacheTestCase
         $data = str_repeat('ЖЫ', 8192); // http://www.php.net/manual/en/function.fread.php
         $key = 'bigdata2';
 
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $data);
         $this->assertSame($cache->get($key), $data);
     }
@@ -124,7 +125,7 @@ class RedisCacheTest extends CacheTestCase
         $data = ['abc' => 'ежик', 2 => 'def'];
         $key = 'data1';
 
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $data);
         $this->assertSame($cache->get($key), $data);
     }
@@ -134,17 +135,18 @@ class RedisCacheTest extends CacheTestCase
         $this->resetCacheInstance();
 
         $cache = $this->getCacheInstance();
-        $cache->enableReplicas = true;
+        $handler = $cache->getHandler();
+        $handler->enableReplicas = true;
 
         $key = 'replica-1';
         $value = 'replica';
 
         //No Replica listed
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $value);
         $this->assertSame($cache->get($key), $value);
 
-        $cache->replicas = [
+        $handler->replicas = [
             ['hostname' => 'localhost'],
         ];
         $this->assertSame($cache->get($key), $value);
@@ -152,34 +154,34 @@ class RedisCacheTest extends CacheTestCase
         //One Replica listed
         $this->resetCacheInstance();
         $cache = $this->getCacheInstance();
-        $cache->enableReplicas = true;
-        $cache->replicas = [
+        $handler->enableReplicas = true;
+        $handler->replicas = [
             ['hostname' => 'localhost'],
         ];
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $value);
         $this->assertSame($cache->get($key), $value);
 
         //Multiple Replicas listed
         $this->resetCacheInstance();
         $cache = $this->getCacheInstance();
-        $cache->enableReplicas = true;
+        $handler->enableReplicas = true;
 
-        $cache->replicas = [
+        $handler->replicas = [
             ['hostname' => 'localhost'],
             ['hostname' => 'localhost'],
         ];
-        $this->assertFalse($cache->get($key));
+        $this->assertNull($cache->get($key));
         $cache->set($key, $value);
         $this->assertSame($cache->get($key), $value);
 
         //invalid config
         $this->resetCacheInstance();
         $cache = $this->getCacheInstance();
-        $cache->enableReplicas = true;
+        $handler->enableReplicas = true;
 
-        $cache->replicas = ['redis'];
-        $this->assertFalse($cache->get($key));
+        $handler->replicas = ['redis'];
+        $this->assertNull($cache->get($key));
         $cache->set($key, $value);
         $this->assertSame($cache->get($key), $value);
 
