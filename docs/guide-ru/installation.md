@@ -25,14 +25,14 @@ php composer.phar require --prefer-dist yiisoft/db-redis
 
 ## Конфигурирование приложения
 
-Чтобы использовать это расширение, вам необходимо настроить класс [[yii\db\redis\Connection|Connection]] в конфигурации вашего приложения:
+Чтобы использовать это расширение, вам необходимо настроить класс [[Yiisoft\Db\Redis\Connection|Connection]] в конфигурации вашего приложения:
 
 ```php
 return [
     //....
     'components' => [
         'redis' => [
-            'class' => 'yii\db\redis\Connection',
+            'class' => 'Yiisoft\Db\Redis\Connection',
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,
@@ -48,4 +48,4 @@ Yii::$app->redis->set('mykey', 'some value');
 echo Yii::$app->redis->get('mykey');
 ```
 
-Смотри [[yii\db\redis\Connection]] для получения полного списка доступных методов.
+Смотри [[Yiisoft\Db\Redis\Connection]] для получения полного списка доступных методов.

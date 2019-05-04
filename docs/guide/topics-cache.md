@@ -2,7 +2,7 @@ Using the Cache component
 =========================
 
 To use the `Cache` component, in addition to configuring the connection as described in the [Installation](installation.md) section,
-you also have to configure the `cache` component to be [[yii\db\redis\Cache]]:
+you also have to configure the `cache` component to be [[Yiisoft\Db\Redis\Cache]]:
 
 ```php
 return [
@@ -10,7 +10,7 @@ return [
     'components' => [
         // ...
         'cache' => [
-            'class' => 'yii\db\redis\Cache',
+            'class' => 'Yiisoft\Db\Redis\Cache',
         ],
     ]
 ];
@@ -25,7 +25,7 @@ return [
     'components' => [
         // ...
         'cache' => [
-            'class' => 'yii\db\redis\Cache',
+            'class' => 'Yiisoft\Db\Redis\Cache',
             'redis' => [
                 'hostname' => 'localhost',
                 'port' => 6379,
@@ -37,7 +37,7 @@ return [
 ```
 
 The cache provides all methods of the [[yii\caching\CacheInterface]]. If you want to access redis specific methods that are not
-included in the interface, you can use them via [[yii\db\redis\Cache::$redis]], which is an instance of [[yii\db\redis\Connection]]:
+included in the interface, you can use them via [[Yiisoft\Db\Redis\Cache::$redis]], which is an instance of [[Yiisoft\Db\Redis\Connection]]:
 
 ```php
 Yii::$app->cache->redis->hset('mykey', 'somefield', 'somevalue');
@@ -45,4 +45,4 @@ Yii::$app->cache->redis->hget('mykey', 'somefield');
 ...
 ```
 
-See [[yii\db\redis\Connection]] for a full list of available methods.
+See [[Yiisoft\Db\Redis\Connection]] for a full list of available methods.

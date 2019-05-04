@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
 /**
  * Class OrderItem

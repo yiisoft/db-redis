@@ -1,11 +1,11 @@
 <?php
 
-namespace yii\db\redis\tests;
+namespace Yiisoft\Db\Redis\Tests;
 
 use yii\validators\UniqueValidator;
-use yii\db\redis\tests\data\ar\ActiveRecord;
-use yii\db\redis\tests\data\ar\Customer;
-use yii\db\redis\tests\data\ar\OrderItem;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\ActiveRecord;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Customer;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItem;
 
 /**
  * UniqueValidatorTest tests unique validator with Redis

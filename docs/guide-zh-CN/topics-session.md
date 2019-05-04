@@ -2,7 +2,7 @@
 ===========================
 
 为了使用 `Session` 组件，如 [安装](installation.md) 章节中所描述的，除了配置连接，
-你也需要配置 [[yii\db\redis\Session]] 中的 `session` 组件：
+你也需要配置 [[Yiisoft\Db\Redis\Session]] 中的 `session` 组件：
 
 ```php
 return [
@@ -10,7 +10,7 @@ return [
     'components' => [
         // ...
         'session' => [
-            'class' => 'yii\db\redis\Session',
+            'class' => 'Yiisoft\Db\Redis\Session',
         ],
     ]
 ];
@@ -25,7 +25,7 @@ return [
     'components' => [
         // ...
         'session' => [
-            'class' => 'yii\db\redis\Session',
+            'class' => 'Yiisoft\Db\Redis\Session',
             'redis' => [
                 'hostname' => 'localhost',
                 'port' => 6379,

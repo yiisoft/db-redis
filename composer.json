@@ -37,10 +37,10 @@
         "yiisoft/mutex": "^3.0@dev"
     },
     "autoload": {
-        "psr-4": { "yii\\db\\redis\\": "src" }
+        "psr-4": { "Yiisoft\\Db\\Redis\\": "src" }
     },
     "autoload-dev": {
-        "psr-4": { "yii\\db\\redis\\tests\\": "tests/"}
+        "psr-4": { "Yiisoft\\Db\\Redis\\Tests\\": "tests/"}
     },
     "extra": {
         "branch-alias": {

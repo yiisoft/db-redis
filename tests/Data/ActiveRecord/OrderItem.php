@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
 /**
  * Class OrderItem
@@ -32,7 +32,7 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getOrder()
     {
@@ -40,7 +40,7 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\redis\ActiveQuery
+     * @return \Yiisoft\Db\Redis\ActiveQuery
      */
     public function getItem()
     {

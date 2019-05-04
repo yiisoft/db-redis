@@ -1,12 +1,12 @@
 <?php
 
-namespace yii\db\redis\tests;
+namespace Yiisoft\Db\Redis\Tests;
 
 use Yiisoft\Arrays\ArrayHelper;
 use yii\helpers\Yii;
 use Yiisoft\Log\Logger;
-use yii\db\redis\Connection;
-use yii\db\redis\SocketException;
+use Yiisoft\Db\Redis\Connection;
+use Yiisoft\Db\Redis\SocketException;
 
 /**
  * @group redis
@@ -108,9 +108,9 @@ class RedisConnectionTest extends TestCase
         $this->assertTrue($db->ping());
         sleep(2);
         if (method_exists($this, 'setExpectedException')) {
-            $this->setExpectedException('\yii\db\redis\SocketException');
+            $this->setExpectedException('\Yiisoft\Db\Redis\SocketException');
         } else {
-            $this->expectException('\yii\db\redis\SocketException');
+            $this->expectException('\Yiisoft\Db\Redis\SocketException');
         }
         $this->assertTrue($db->ping());
     }

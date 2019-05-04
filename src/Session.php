@@ -5,7 +5,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
 use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
@@ -23,7 +23,7 @@ use yii\helpers\Yii;
  * ~~~
  * [
  *     'session' => [
- *         '__class' => \yii\db\redis\Session::class,
+ *         '__class' => \Yiisoft\Db\Redis\Session::class,
  *         'redis' => [
  *             'hostname' => 'localhost',
  *             'port' => 6379,
@@ -38,7 +38,7 @@ use yii\helpers\Yii;
  * ~~~
  * [
  *     'session' => [
- *         '__class' => yii\db\redis\Session::class,
+ *         '__class' => Yiisoft\Db\Redis\Session::class,
  *         // 'redis' => 'redis' // id of the connection application component
  *     ],
  * ]

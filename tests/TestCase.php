@@ -1,10 +1,10 @@
 <?php
 
-namespace yii\db\redis\tests;
+namespace Yiisoft\Db\Redis\Tests;
 
 use yii\di\Container;
 use Yiisoft\Arrays\ArrayHelper;
-use yii\db\redis\Connection;
+use Yiisoft\Db\Redis\Connection;
 
 /**
  * This is the base class for all yii framework unit tests.
