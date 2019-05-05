@@ -170,7 +170,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testFindAsArray()
     {
-        /* @var $customerClass \yii\db\ActiveRecordInterface */
+        /* @var $customerClass \Yiisoft\Db\ActiveRecordInterface */
         $customerClass = $this->getCustomerClass();
 
         // asArray
@@ -432,7 +432,7 @@ class ActiveRecordTest extends TestCase
 
     public function testNotCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -444,7 +444,7 @@ class ActiveRecordTest extends TestCase
 
     public function testBetweenCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -460,7 +460,7 @@ class ActiveRecordTest extends TestCase
 
     public function testInCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -482,7 +482,7 @@ class ActiveRecordTest extends TestCase
 
     public function testCountQuery()
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $itemClass::find();
@@ -518,7 +518,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testValueEscapingInWhere($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $itemClass::find()->where($filterWithInjection['id']);
@@ -573,7 +573,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testValueEscapingInFindByCondition($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $this->invokeMethod(new $itemClass, 'findByCondition', [$filterWithInjection['id']]);
