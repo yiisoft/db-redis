@@ -8,8 +8,8 @@
 namespace Yiisoft\Db\Redis;
 
 use yii\base\Component;
-use yii\db\ConnectionInterface;
-use yii\db\Exception;
+use Yiisoft\Db\ConnectionInterface;
+use Yiisoft\Db\Exception;
 use yii\helpers\Yii;
 use Yiisoft\Inflector\InflectorHelper;
 

@@ -36,7 +36,7 @@ Yii Framework 2 redis extension Change Log
 - Bug #104: Fixed execution of two-word commands (cebe,branimir93)
 - Enh #53: Added `Mutex` that implements a Redis based mutex (turboezh, sergeymakinen)
 - Enh #81: Allow setting `Connection::$database` to `null` to avoid sending a `SELECT` command after connection (cebe)
-- Enh #89: Added support for `\yii\db\QueryInterface::emulateExecution()` (samdark)
+- Enh #89: Added support for `\Yiisoft\Db\QueryInterface::emulateExecution()` (samdark)
 - Enh #103: Added missing commands and `@method` documentation for redis commands (cebe)
 - Enh: Optimized find by PK for relational queries and IN condition (cebe, andruha)
 
