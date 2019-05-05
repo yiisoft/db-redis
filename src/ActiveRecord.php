@@ -7,7 +7,7 @@
 
 namespace Yiisoft\Db\Redis;
 
-use yii\activerecord\BaseActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
 use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
 use Yiisoft\Inflector\InflectorHelper;

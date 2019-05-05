@@ -11,7 +11,7 @@ use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Order;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Item;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItemWithNullFK;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderWithNullFK;
-use yii\activerecord\tests\unit\ActiveRecordTestTrait;
+use Yiisoft\ActiveRecord\Tests\Unit\ActiveRecordTestTrait;
 
 /**
  * @group redis

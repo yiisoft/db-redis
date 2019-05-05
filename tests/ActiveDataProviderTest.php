@@ -4,7 +4,7 @@ namespace Yiisoft\Db\Redis\Tests;
 
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\ActiveRecord;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Item;
-use yii\activerecord\data\ActiveDataProvider;
+use Yiisoft\ActiveRecord\Data\ActiveDataProvider;
 
 /**
  * @group redis
