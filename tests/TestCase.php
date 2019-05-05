@@ -2,8 +2,6 @@
 
 namespace Yiisoft\Db\Redis\Tests;
 
-use yii\di\Container;
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Redis\Connection;
 
 /**
@@ -23,16 +21,16 @@ abstract class TestCase extends \yii\tests\TestCase
     public static function getParam($name, $default = null)
     {
         if (static::$params === null) {
-            static::$params = require(__DIR__ . '/data/config.php');
+            static::$params = require __DIR__ . '/data/config.php';
         }
 
-        return isset(static::$params[$name]) ? static::$params[$name] : $default;
+        return static::$params[$name] ?? $default;
     }
 
     protected function setUp()
     {
         $databases = self::getParam('databases');
-        $params = isset($databases['redis']) ? $databases['redis'] : null;
+        $params = $databases['redis'] ?? null;
         if ($params === null) {
             $this->markTestSkipped('No redis server connection configured.');
         }
@@ -54,7 +52,7 @@ abstract class TestCase extends \yii\tests\TestCase
     public function getConnection($reset = true)
     {
         $databases = self::getParam('databases');
-        $params = isset($databases['redis']) ? $databases['redis'] : [];
+        $params = $databases['redis'] ?? [];
         $db = new Connection($params);
         if ($reset) {
             $db->open();
