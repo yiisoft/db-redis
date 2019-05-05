@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
 /**
  * ActiveRecord is ...
@@ -8,15 +8,15 @@ namespace yii\db\redis\tests\data\ar;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class ActiveRecord extends \yii\db\redis\ActiveRecord
+class ActiveRecord extends \Yiisoft\Db\Redis\ActiveRecord
 {
     /**
-     * @return \yii\db\redis\Connection
+     * @return \Yiisoft\Db\Redis\Connection
      */
     public static $db;
 
     /**
-     * @return \yii\db\redis\Connection
+     * @return \Yiisoft\Db\Redis\Connection
      */
     public static function getDb()
     {

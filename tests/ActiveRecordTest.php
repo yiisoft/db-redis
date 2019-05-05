@@ -1,17 +1,17 @@
 <?php
 
-namespace yii\db\redis\tests;
+namespace Yiisoft\Db\Redis\Tests;
 
-use yii\db\redis\ActiveQuery;
-use yii\db\redis\LuaScriptBuilder;
-use yii\db\redis\tests\data\ar\ActiveRecord;
-use yii\db\redis\tests\data\ar\Customer;
-use yii\db\redis\tests\data\ar\OrderItem;
-use yii\db\redis\tests\data\ar\Order;
-use yii\db\redis\tests\data\ar\Item;
-use yii\db\redis\tests\data\ar\OrderItemWithNullFK;
-use yii\db\redis\tests\data\ar\OrderWithNullFK;
-use yii\activerecord\tests\unit\ActiveRecordTestTrait;
+use Yiisoft\Db\Redis\ActiveQuery;
+use Yiisoft\Db\Redis\LuaScriptBuilder;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\ActiveRecord;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Customer;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItem;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Order;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Item;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItemWithNullFK;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderWithNullFK;
+use Yiisoft\ActiveRecord\Tests\Unit\ActiveRecordTestTrait;
 
 /**
  * @group redis
@@ -170,7 +170,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testFindAsArray()
     {
-        /* @var $customerClass \yii\db\ActiveRecordInterface */
+        /* @var $customerClass \Yiisoft\Db\ActiveRecordInterface */
         $customerClass = $this->getCustomerClass();
 
         // asArray
@@ -432,7 +432,7 @@ class ActiveRecordTest extends TestCase
 
     public function testNotCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -444,7 +444,7 @@ class ActiveRecordTest extends TestCase
 
     public function testBetweenCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -460,7 +460,7 @@ class ActiveRecordTest extends TestCase
 
     public function testInCondition()
     {
-        /* @var $orderClass \yii\db\ActiveRecordInterface */
+        /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
         $orderClass = $this->getOrderClass();
 
         /* @var $this TestCase|ActiveRecordTestTrait */
@@ -482,7 +482,7 @@ class ActiveRecordTest extends TestCase
 
     public function testCountQuery()
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $itemClass::find();
@@ -518,7 +518,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testValueEscapingInWhere($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $itemClass::find()->where($filterWithInjection['id']);
@@ -573,7 +573,7 @@ class ActiveRecordTest extends TestCase
      */
     public function testValueEscapingInFindByCondition($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
-        /* @var $itemClass \yii\db\ActiveRecordInterface */
+        /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
         $itemClass = $this->getItemClass();
 
         $query = $this->invokeMethod(new $itemClass, 'findByCondition', [$filterWithInjection['id']]);

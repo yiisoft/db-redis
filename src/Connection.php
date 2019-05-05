@@ -5,11 +5,11 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
 use yii\base\Component;
-use yii\db\ConnectionInterface;
-use yii\db\Exception;
+use Yiisoft\Db\ConnectionInterface;
+use Yiisoft\Db\Exception;
 use yii\helpers\Yii;
 use Yiisoft\Inflector\InflectorHelper;
 
@@ -237,7 +237,7 @@ class Connection extends Component implements ConnectionInterface
     /**
      * @event Event an event that is triggered after a DB connection is established
      */
-    const EVENT_AFTER_OPEN = 'after.open';
+    public const EVENT_AFTER_OPEN = 'after.open';
 
     /**
      * @var string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
@@ -630,9 +630,9 @@ class Connection extends Component implements ConnectionInterface
         $redisCommand = strtoupper(InflectorHelper::camel2words($name, false));
         if (in_array($redisCommand, $this->redisCommands)) {
             return $this->executeCommand($redisCommand, $params);
-        } else {
-            return parent::__call($name, $params);
         }
+
+        return parent::__call($name, $params);
     }
 
     /**

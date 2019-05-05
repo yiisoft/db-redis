@@ -5,9 +5,9 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
-use yii\activerecord\BaseActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
 use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
 use Yiisoft\Inflector\InflectorHelper;
@@ -24,7 +24,7 @@ use Yiisoft\Strings\StringHelper;
  * The following is an example model called `Customer`:
  *
  * ```php
- * class Customer extends \yii\db\redis\ActiveRecord
+ * class Customer extends \Yiisoft\Db\Redis\ActiveRecord
  * {
  *     public function attributes()
  *     {
@@ -46,7 +46,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$app->get('redis');
+        return Yii::getApp()->get('redis');
     }
 
     /**
@@ -55,7 +55,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function find()
     {
-        return Yii::createObject(ActiveQuery::class, [get_called_class()]);
+        return Yii::createObject(ActiveQuery::class, [static::class]);
     }
 
     /**
@@ -90,7 +90,7 @@ class ActiveRecord extends BaseActiveRecord
      */
     public static function keyPrefix()
     {
-        return InflectorHelper::camel2id(StringHelper::basename(get_called_class()), '_');
+        return InflectorHelper::camel2id(StringHelper::basename(static::class), '_');
     }
 
     /**
@@ -316,10 +316,14 @@ class ActiveRecord extends BaseActiveRecord
     {
         if (is_numeric($key)) {
             return $key;
-        } elseif (is_string($key)) {
+        }
+
+        if (is_string($key)) {
             return ctype_alnum($key) && StringHelper::byteLength($key) <= 32 ? $key : md5($key);
-        } elseif (is_array($key)) {
-            if (count($key) == 1) {
+        }
+
+        if (is_array($key)) {
+            if (count($key) === 1) {
                 return self::buildKey(reset($key));
             }
             ksort($key); // ensure order is always the same

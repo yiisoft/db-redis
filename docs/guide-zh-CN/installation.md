@@ -25,14 +25,14 @@ php composer.phar require --prefer-dist yiisoft/db-redis
 
 ## 配置应用程序
 
-使用此扩展时，需要在你的应用程序配置中配置 [[yii\db\redis\Connection|Connection]] 类：
+使用此扩展时，需要在你的应用程序配置中配置 [[Yiisoft\Db\Redis\Connection|Connection]] 类：
 
 ```php
 return [
     //....
     'components' => [
         'redis' => [
-            'class' => 'yii\db\redis\Connection',
+            'class' => 'Yiisoft\Db\Redis\Connection',
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,

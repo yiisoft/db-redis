@@ -5,10 +5,10 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
-use yii\db\Exception;
-use yii\db\Expression;
+use Yiisoft\Db\Exception;
+use Yiisoft\Db\Expression;
 use yii\exceptions\InvalidParamException;
 use yii\exceptions\NotSupportedException;
 
@@ -246,7 +246,7 @@ EOF;
      * on how to specify a condition.
      * @param array $columns the list of columns and aliases to be used
      * @return string the generated SQL expression
-     * @throws \yii\db\Exception if the condition is in bad format
+     * @throws \Yiisoft\Db\Exception if the condition is in bad format
      * @throws \yii\exceptions\NotSupportedException if the condition is not an array
      */
     public function buildCondition($condition, &$columns)

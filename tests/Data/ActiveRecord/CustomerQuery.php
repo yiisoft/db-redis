@@ -1,8 +1,8 @@
 <?php
 
-namespace yii\db\redis\tests\data\ar;
+namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
-use yii\db\redis\ActiveQuery;
+use Yiisoft\Db\Redis\ActiveQuery;
 
 /**
  * CustomerQuery

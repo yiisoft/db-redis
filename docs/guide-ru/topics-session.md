@@ -1,7 +1,7 @@
 Использование компонента Session
 ================================
 
-Чтобы использовать компонент `Session`, в дополнение к настройке соединения, как описано в разделе [Установка](installation.md), вам также нужно настроить компонент `session` как [[yii\db\redis\Session]]:
+Чтобы использовать компонент `Session`, в дополнение к настройке соединения, как описано в разделе [Установка](installation.md), вам также нужно настроить компонент `session` как [[Yiisoft\Db\Redis\Session]]:
 
 ```php
 return [
@@ -9,7 +9,7 @@ return [
     'components' => [
         // ...
         'session' => [
-            'class' => 'yii\db\redis\Session',
+            'class' => 'Yiisoft\Db\Redis\Session',
         ],
     ]
 ];
@@ -23,7 +23,7 @@ return [
     'components' => [
         // ...
         'session' => [
-            'class' => 'yii\db\redis\Session',
+            'class' => 'Yiisoft\Db\Redis\Session',
             'redis' => [
                 'hostname' => 'localhost',
                 'port' => 6379,

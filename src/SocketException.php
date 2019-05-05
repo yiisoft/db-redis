@@ -5,9 +5,9 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
-use yii\db\Exception;
+use Yiisoft\Db\Exception;
 
 /**
  * SocketException indicates a socket connection failure in [[Connection]].

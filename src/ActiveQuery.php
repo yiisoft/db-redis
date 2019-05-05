@@ -5,13 +5,13 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace yii\db\redis;
+namespace Yiisoft\Db\Redis;
 
-use yii\activerecord\ActiveQueryInterface;
-use yii\activerecord\ActiveQueryTrait;
-use yii\activerecord\ActiveRelationTrait;
+use Yiisoft\ActiveRecord\ActiveQueryInterface;
+use Yiisoft\ActiveRecord\ActiveQueryTrait;
+use Yiisoft\ActiveRecord\ActiveRelationTrait;
 use yii\base\Component;
-use yii\db\QueryTrait;
+use Yiisoft\Db\QueryTrait;
 use yii\exceptions\InvalidParamException;
 use yii\exceptions\NotSupportedException;
 
