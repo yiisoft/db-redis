@@ -11,7 +11,7 @@ use yii\base\Component;
 use Yiisoft\Db\ConnectionInterface;
 use Yiisoft\Db\Exception;
 use yii\helpers\Yii;
-use Yiisoft\Inflector\InflectorHelper;
+use Yiisoft\Strings\Inflector;
 
 /**
  * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.
@@ -627,7 +627,7 @@ class Connection extends Component implements ConnectionInterface
      */
     public function __call($name, $params)
     {
-        $redisCommand = strtoupper(InflectorHelper::camel2words($name, false));
+        $redisCommand = strtoupper(Inflector::camel2words($name, false));
         if (in_array($redisCommand, $this->redisCommands)) {
             return $this->executeCommand($redisCommand, $params);
         }
