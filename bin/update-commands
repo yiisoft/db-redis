@@ -6,7 +6,7 @@
  */
 
 use yii\helpers\Console;
-use Yiisoft\Inflector\InflectorHelper;
+use Yiisoft\Strings\Inflector;
 
 foreach([
     __DIR__ . '/../vendor/yiisoft/yii2/Yii.php',
@@ -73,7 +73,7 @@ $specialArgs = [
 
 $methods = [];
 foreach($commands as $name => $info) {
-    $name = lcfirst(InflectorHelper::camelize($name));
+    $name = lcfirst(Inflector::camelize($name));
     if (isset($specialArgs[$name])) {
         $arglist = $specialArgs[$name];
     } else {
@@ -86,9 +86,9 @@ foreach($commands as $name => $info) {
                 $arg = substr($arg, 1, -1);
                 return implode(', ', array_map(function($a) {return '$'.$a.' = null'; }, explode(' ', $arg)));
             } elseif (preg_match('~^(\[?)([\w-]+) \[\2 ...\](\]?)~', $arg, $m)) {
-                return '...$'. lcfirst(InflectorHelper::camelize($m[2])) . 's';
+                return '...$'. lcfirst(Inflector::camelize($m[2])) . 's';
             }
-            return '$' . lcfirst(InflectorHelper::camelize($arg));
+            return '$' . lcfirst(Inflector::camelize($arg));
         }, $info['args']));
     }
     $methods[] = " * @method mixed $name($arglist) " . $info['descr'] . '. <' . $info['url'] . '>';

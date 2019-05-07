@@ -10,7 +10,7 @@ namespace Yiisoft\Db\Redis;
 use Yiisoft\ActiveRecord\BaseActiveRecord;
 use yii\exceptions\InvalidConfigException;
 use yii\helpers\Yii;
-use Yiisoft\Inflector\InflectorHelper;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Strings\StringHelper;
 
 /**
@@ -83,14 +83,14 @@ class ActiveRecord extends BaseActiveRecord
 
     /**
      * Declares prefix of the key that represents the keys that store this records in redis.
-     * By default this method returns the class name as the table name by calling [[InflectorHelper::camel2id()]].
+     * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]].
      * For example, 'Customer' becomes 'customer', and 'OrderItem' becomes
      * 'order_item'. You may override this method if you want different key naming.
      * @return string the prefix to apply to all AR keys
      */
     public static function keyPrefix()
     {
-        return InflectorHelper::camel2id(StringHelper::basename(static::class), '_');
+        return Inflector::camel2id(StringHelper::basename(static::class), '_');
     }
 
     /**
