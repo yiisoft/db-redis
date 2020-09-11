@@ -1,14 +1,10 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
+
+declare(strict_types=1);
 
 namespace Yiisoft\Db\Redis;
 
-use yii\helpers\Yii;
-use Yiisoft\Cache\SimpleCache;
+use Yiisoft\Cache\Cache;
 
 /**
  * Redis Cache implements a cache application component based on [redis](http://redis.io/) key-value store.
@@ -68,26 +64,17 @@ use Yiisoft\Cache\SimpleCache;
  *     ],
  * ]
  * ~~~
- *
- * @author Carsten Brandt <mail@cebe.cc>
- * @since 2.0
+
  */
-class Cache extends SimpleCache
+class Cache extends Cache
 {
     /**
-     * @var Connection|string|array the Redis [[Connection]] object or the application component ID of the Redis [[Connection]].
-     * This can also be an array that is used to create a redis [[Connection]] instance in case you do not want do configure
-     * redis connection as an application component.
-     * After the Cache object is created, if you want to change this property, you should only assign it
-     * with a Redis [[Connection]] object.
+     * @var bool whether to enable read/get from redis replicas.
+     *
+     * {@see $replicas}
      */
-    public $redis = 'redis';
-    /**
-     * @var bool whether to enable read / get from redis replicas.
-     * @since 2.0.8
-     * @see $replicas
-     */
-    public $enableReplicas = false;
+    public bool $enableReplicas = false;
+
     /**
      * @var array the Redis [[Connection]] configurations for redis replicas.
      * Each entry is a class configuration, which will be used to instantiate a replica connection.
@@ -103,8 +90,7 @@ class Cache extends SimpleCache
      * ],
      * ```
      *
-     * @since 2.0.8
-     * @see $enableReplicas
+     * {@see $enableReplicas}
      */
     public $replicas = [];
 

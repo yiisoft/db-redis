@@ -6,163 +6,117 @@ use Yiisoft\Db\Redis\ActiveQuery;
 use Yiisoft\Db\Redis\LuaScriptBuilder;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\ActiveRecord;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Customer;
+use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Dummy;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItem;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Order;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\Item;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderItemWithNullFK;
 use Yiisoft\Db\Redis\Tests\Data\ActiveRecord\OrderWithNullFK;
-use Yiisoft\ActiveRecord\Tests\Unit\ActiveRecordTestTrait;
+use Yiisoft\ActiveRecord\Tests\ActiveRecordTestTrait;
 
 /**
  * @group redis
  */
 class ActiveRecordTest extends TestCase
 {
-    use ActiveRecordTestTrait;
-
-    /**
-     * @return string
-     */
-    public function getCustomerClass()
-    {
-        return Customer::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getItemClass()
-    {
-        return Item::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrderClass()
-    {
-        return Order::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrderItemClass()
-    {
-        return OrderItem::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrderWithNullFKClass()
-    {
-        return OrderWithNullFK::class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrderItemWithNullFKmClass()
-    {
-        return OrderItemWithNullFK::class;
-    }
-
-    public function setUp()
+    //use ActiveRecordTestTrait;
+    public function setUp(): void
     {
         parent::setUp();
-        ActiveRecord::$db = $this->getConnection();
+
+        $this->getConnection(true);
 
         $customer = new Customer();
-        $customer->setAttributes(['email' => 'user1@example.com', 'name' => 'user1', 'address' => 'address1', 'status' => 1, 'profile_id' => 1], false);
-        $customer->save(false);
+
+        $customer->setAttributes(['email' => 'user1@example.com', 'name' => 'user1', 'address' => 'address1', 'status' =>1, 'profile_id', 1]);
+        $customer->save();
         $customer = new Customer();
         $customer->setAttributes(['email' => 'user2@example.com', 'name' => 'user2', 'address' => 'address2', 'status' => 1, 'profile_id' => null], false);
-        $customer->save(false);
+        $customer->save();
         $customer = new Customer();
         $customer->setAttributes(['email' => 'user3@example.com', 'name' => 'user3', 'address' => 'address3', 'status' => 2, 'profile_id' => 2], false);
-        $customer->save(false);
+        $customer->save();
 
         //		INSERT INTO category (name) VALUES ('Books');
         //		INSERT INTO category (name) VALUES ('Movies');
 
         $item = new Item();
         $item->setAttributes(['name' => 'Agile Web Application Development with Yii1.1 and PHP5', 'category_id' => 1], false);
-        $item->save(false);
+        $item->save();
         $item = new Item();
         $item->setAttributes(['name' => 'Yii 1.1 Application Development Cookbook', 'category_id' => 1], false);
-        $item->save(false);
+        $item->save();
         $item = new Item();
         $item->setAttributes(['name' => 'Ice Age', 'category_id' => 2], false);
-        $item->save(false);
+        $item->save();
         $item = new Item();
         $item->setAttributes(['name' => 'Toy Story', 'category_id' => 2], false);
-        $item->save(false);
+        $item->save();
         $item = new Item();
         $item->setAttributes(['name' => 'Cars', 'category_id' => 2], false);
-        $item->save(false);
+        $item->save();
 
         $order = new Order();
         $order->setAttributes(['customer_id' => 1, 'created_at' => 1325282384, 'total' => 110.0], false);
-        $order->save(false);
+        $order->save();
         $order = new Order();
         $order->setAttributes(['customer_id' => 2, 'created_at' => 1325334482, 'total' => 33.0], false);
-        $order->save(false);
+        $order->save();
         $order = new Order();
         $order->setAttributes(['customer_id' => 2, 'created_at' => 1325502201, 'total' => 40.0], false);
-        $order->save(false);
+        $order->save();
 
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 1, 'item_id' => 1, 'quantity' => 1, 'subtotal' => 30.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 1, 'item_id' => 2, 'quantity' => 2, 'subtotal' => 40.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 4, 'quantity' => 1, 'subtotal' => 10.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 5, 'quantity' => 1, 'subtotal' => 15.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 3, 'quantity' => 1, 'subtotal' => 8.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 3, 'item_id' => 2, 'quantity' => 1, 'subtotal' => 40.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         // insert a record with non-integer PK
         $orderItem = new OrderItem();
         $orderItem->setAttributes(['order_id' => 3, 'item_id' => 'nostr', 'quantity' => 1, 'subtotal' => 40.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
 
         $order = new OrderWithNullFK();
         $order->setAttributes(['customer_id' => 1, 'created_at' => 1325282384, 'total' => 110.0], false);
-        $order->save(false);
+        $order->save();
         $order = new OrderWithNullFK();
         $order->setAttributes(['customer_id' => 2, 'created_at' => 1325334482, 'total' => 33.0], false);
-        $order->save(false);
+        $order->save();
         $order = new OrderWithNullFK();
         $order->setAttributes(['customer_id' => 2, 'created_at' => 1325502201, 'total' => 40.0], false);
-        $order->save(false);
+        $order->save();
 
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 1, 'item_id' => 1, 'quantity' => 1, 'subtotal' => 30.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 1, 'item_id' => 2, 'quantity' => 2, 'subtotal' => 40.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 4, 'quantity' => 1, 'subtotal' => 10.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 5, 'quantity' => 1, 'subtotal' => 15.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 2, 'item_id' => 3, 'quantity' => 1, 'subtotal' => 8.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
         $orderItem = new OrderItemWithNullFK();
         $orderItem->setAttributes(['order_id' => 3, 'item_id' => 2, 'quantity' => 1, 'subtotal' => 40.0], false);
-        $orderItem->save(false);
+        $orderItem->save();
     }
 
     /**
@@ -170,11 +124,9 @@ class ActiveRecordTest extends TestCase
      */
     public function testFindAsArray()
     {
-        /* @var $customerClass \Yiisoft\Db\ActiveRecordInterface */
-        $customerClass = $this->getCustomerClass();
+        /** asArray */
+        $customer = Customer::find()->where(['id' => 2])->asArray()->one();
 
-        // asArray
-        $customer = $customerClass::find()->where(['id' => 2])->asArray()->one();
         $this->assertEquals([
             'id' => 2,
             'email' => 'user2@example.com',
@@ -183,8 +135,9 @@ class ActiveRecordTest extends TestCase
             'status' => 1,
         ], $customer);
 
-        // find all asArray
-        $customers = $customerClass::find()->asArray()->all();
+        /** find all asArray */
+        $customers = Customer::find()->asArray()->all();
+
         $this->assertCount(3, $customers);
         $this->assertArrayHasKey('id', $customers[0]);
         $this->assertArrayHasKey('name', $customers[0]);
@@ -238,81 +191,83 @@ class ActiveRecordTest extends TestCase
     public function testFilterWhere()
     {
         // should work with hash format
-        $query = new ActiveQuery('dummy');
+        $query = new ActiveQuery(Dummy::class);
+
         $query->filterWhere([
             'id' => 0,
             'title' => '   ',
             'author_ids' => [],
         ]);
-        $this->assertEquals(['id' => 0], $query->where);
+
+        $this->assertEquals(['id' => 0], $query->getWhere());
 
         $query->andFilterWhere(['status' => null]);
-        $this->assertEquals(['id' => 0], $query->where);
+        $this->assertEquals(['id' => 0], $query->getWhere());
 
         $query->orFilterWhere(['name' => '']);
-        $this->assertEquals(['id' => 0], $query->where);
+        $this->assertEquals(['id' => 0], $query->getWhere());
 
         // should work with operator format
-        $query = new ActiveQuery('dummy');
+        $query = new ActiveQuery(Dummy::class);
         $condition = ['like', 'name', 'Alex'];
         $query->filterWhere($condition);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['between', 'id', null, null]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->orFilterWhere(['not between', 'id', null, null]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['in', 'id', []]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['not in', 'id', []]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['not in', 'id', []]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['like', 'id', '']);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['or like', 'id', '']);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['not like', 'id', '   ']);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
 
         $query->andFilterWhere(['or not like', 'id', null]);
-        $this->assertEquals($condition, $query->where);
+        $this->assertEquals($condition, $query->getWhere());
     }
 
     public function testFilterWhereRecursively()
     {
-        $query = new ActiveQuery('dummy');
+        $query = new ActiveQuery(Dummy::class);
         $query->filterWhere(['and', ['like', 'name', ''], ['like', 'title', ''], ['id' => 1], ['not', ['like', 'name', '']]]);
-        $this->assertEquals(['and', ['id' => 1]], $query->where);
+        $this->assertEquals(['and', ['id' => 1]], $query->getWhere());
     }
 
     public function testAutoIncrement()
     {
-        Customer::getDb()->executeCommand('FLUSHDB');
+        Customer::getConnection()->executeCommand('FLUSHDB');
 
         $customer = new Customer();
         $customer->setAttributes(['id' => 4, 'email' => 'user4@example.com', 'name' => 'user4', 'address' => 'address4', 'status' => 1, 'profile_id' => null], false);
-        $customer->save(false);
+        $customer->save();
         $this->assertEquals(4, $customer->id);
         $customer = new Customer();
         $customer->setAttributes(['email' => 'user5@example.com', 'name' => 'user5', 'address' => 'address5', 'status' => 1, 'profile_id' => null], false);
-        $customer->save(false);
+        $customer->save();
         $this->assertEquals(5, $customer->id);
 
         $customer = new Customer();
         $customer->setAttributes(['id' => 1, 'email' => 'user1@example.com', 'name' => 'user1', 'address' => 'address1', 'status' => 1, 'profile_id' => null], false);
-        $customer->save(false);
+        $customer->save();
         $this->assertEquals(1, $customer->id);
         $customer = new Customer();
         $customer->setAttributes(['email' => 'user6@example.com', 'name' => 'user6', 'address' => 'address6', 'status' => 1, 'profile_id' => null], false);
-        $customer->save(false);
+        $customer->save();
         $this->assertEquals(6, $customer->id);
 
 
@@ -338,7 +293,7 @@ class ActiveRecordTest extends TestCase
     {
         $customer = new Customer();
         $customer->email = "the People's Republic of China";
-        $customer->save(false);
+        $customer->save();
 
         /** @var Customer $c */
         $c = Customer::findOne(['email' => "the People's Republic of China"]);
@@ -347,12 +302,14 @@ class ActiveRecordTest extends TestCase
 
     public function testFindEmptyWith()
     {
-        Order::getDb()->flushdb();
+        Order::getConnection()->flushdb();
+
         $orders = Order::find()
             ->where(['total' => 100000])
             ->orWhere(['total' => 1])
             ->with('customer')
             ->all();
+
         $this->assertEquals([], $orders);
     }
 
@@ -433,7 +390,7 @@ class ActiveRecordTest extends TestCase
     public function testNotCondition()
     {
         /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
-        $orderClass = $this->getOrderClass();
+        $orderClass = Order::class;
 
         /* @var $this TestCase|ActiveRecordTestTrait */
         $orders = $orderClass::find()->where(['not', ['customer_id' => 2]])->all();
@@ -445,7 +402,7 @@ class ActiveRecordTest extends TestCase
     public function testBetweenCondition()
     {
         /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
-        $orderClass = $this->getOrderClass();
+        $orderClass = Order::class;
 
         /* @var $this TestCase|ActiveRecordTestTrait */
         $orders = $orderClass::find()->where(['between', 'total', 30, 50])->all();
@@ -461,7 +418,7 @@ class ActiveRecordTest extends TestCase
     public function testInCondition()
     {
         /* @var $orderClass \Yiisoft\Db\ActiveRecordInterface */
-        $orderClass = $this->getOrderClass();
+        $orderClass = Order::class;
 
         /* @var $this TestCase|ActiveRecordTestTrait */
         $orders = $orderClass::find()->where(['in', 'customer_id', [1, 2]])->all();
@@ -483,7 +440,7 @@ class ActiveRecordTest extends TestCase
     public function testCountQuery()
     {
         /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
-        $itemClass = $this->getItemClass();
+        $itemClass = Item::class;
 
         $query = $itemClass::find();
         $this->assertEquals(5, $query->count());
@@ -519,17 +476,18 @@ class ActiveRecordTest extends TestCase
     public function testValueEscapingInWhere($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
         /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
-        $itemClass = $this->getItemClass();
+        $itemClass = Item::class;
 
         $query = $itemClass::find()->where($filterWithInjection['id']);
         $lua = new LuaScriptBuilder();
         $script = $lua->buildOne($query);
 
         foreach ($expectedStrings as $string) {
-            $this->assertContains($string, $script);
+            $this->assertStringContainsString($string, $script);
         }
+
         foreach ($unexpectedStrings as $string) {
-            $this->assertNotContains($string, $script);
+            $this->assertStringNotContainsString($string, $script);
         }
     }
 
@@ -574,17 +532,17 @@ class ActiveRecordTest extends TestCase
     public function testValueEscapingInFindByCondition($filterWithInjection, $expectedStrings, $unexpectedStrings = [])
     {
         /* @var $itemClass \Yiisoft\Db\ActiveRecordInterface */
-        $itemClass = $this->getItemClass();
+        $itemClass = Item::class;
 
         $query = $this->invokeMethod(new $itemClass, 'findByCondition', [$filterWithInjection['id']]);
         $lua = new LuaScriptBuilder();
         $script = $lua->buildOne($query);
 
         foreach ($expectedStrings as $string) {
-            $this->assertContains($string, $script);
+            $this->assertStringContainsString($string, $script);
         }
         foreach ($unexpectedStrings as $string) {
-            $this->assertNotContains($string, $script);
+            $this->assertStringNotContainsString($string, $script);
         }
         // ensure injected FLUSHALL call did not succeed
         $query->one();

@@ -1,178 +1,219 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
+
+declare(strict_types=1);
 
 namespace Yiisoft\Db\Redis;
 
 use Yiisoft\Db\Exception;
 use Yiisoft\Db\Expression;
-use yii\exceptions\InvalidParamException;
-use yii\exceptions\NotSupportedException;
+use Yiisoft\Db\Exception\InvalidParamException;
+use Yiisoft\Db\Exception\NotSupportedException;
 
 /**
  * LuaScriptBuilder builds lua scripts used for retrieving data from redis.
- *
- * @author Carsten Brandt <mail@cebe.cc>
- * @since 2.0
  */
-class LuaScriptBuilder extends \yii\base\BaseObject
+final class LuaScriptBuilder
 {
     /**
-     * Builds a Lua script for finding a list of records
-     * @param ActiveQuery $query the query used to build the script
+     * Builds a Lua script for finding a list of records.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     *
      * @return string
      */
-    public function buildAll($query)
+    public function buildAll(ActiveQuery $query): string
     {
-        /* @var $modelClass ActiveRecord */
+        /** @var $modelClass ActiveRecord */
         $modelClass = $query->modelClass;
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
         return $this->build($query, "n=n+1 pks[n]=redis.call('HGETALL',$key .. pk)", 'pks');
     }
 
     /**
-     * Builds a Lua script for finding one record
-     * @param ActiveQuery $query the query used to build the script
+     * Builds a Lua script for finding one record.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     *
      * @return string
      */
-    public function buildOne($query)
+    public function buildOne(ActiveQuery $query): string
     {
-        /* @var $modelClass ActiveRecord */
+        /** @var $modelClass ActiveRecord */
         $modelClass = $query->modelClass;
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
         return $this->build($query, "do return redis.call('HGETALL',$key .. pk) end", 'pks');
     }
 
     /**
-     * Builds a Lua script for finding a column
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $column name of the column
+     * Builds a Lua script for finding a column.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $column name of the column.
+     *
      * @return string
      */
-    public function buildColumn($query, $column)
+    public function buildColumn(ActiveQuery $query, string $column): string
     {
-        // TODO add support for indexBy
-        /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        /**
+         * TODO add support for indexBy.
+         * @var $modelClass ActiveRecord
+         */
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
-        return $this->build($query, "n=n+1 pks[n]=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ")", 'pks');
+        return $this->build(
+            $query,
+            "n=n+1 pks[n]=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ")", 'pks'
+        );
     }
 
     /**
-     * Builds a Lua script for getting count of records
-     * @param ActiveQuery $query the query used to build the script
+     * Builds a Lua script for getting count of records.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     *
      * @return string
      */
-    public function buildCount($query)
+    public function buildCount(ActiveQuery $query): string
     {
         return $this->build($query, 'n=n+1', 'n');
     }
 
     /**
-     * Builds a Lua script for finding the sum of a column
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $column name of the column
+     * Builds a Lua script for finding the sum of a column.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $column name of the column.
+     *
      * @return string
      */
-    public function buildSum($query, $column)
+    public function buildSum(ActiveQuery $query, string $column): string
     {
-        /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        /** @var $modelClass ActiveRecord */
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
         return $this->build($query, "n=n+redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ")", 'n');
     }
 
     /**
-     * Builds a Lua script for finding the average of a column
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $column name of the column
+     * Builds a Lua script for finding the average of a column.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $column name of the column.
+     *
      * @return string
      */
-    public function buildAverage($query, $column)
+    public function buildAverage(ActiveQuery $query, string $column): string
     {
-        /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        /** @var $modelClass ActiveRecord */
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
-        return $this->build($query, "n=n+1 if v==nil then v=0 end v=v+redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ")", 'v/n');
+        return $this->build(
+            $query,
+            "n=n+1 if v==nil then v=0 end v=v+redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ")", 'v/n'
+        );
     }
 
     /**
-     * Builds a Lua script for finding the min value of a column
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $column name of the column
+     * Builds a Lua script for finding the min value of a column.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $column name of the column.
+     *
      * @return string
      */
-    public function buildMin($query, $column)
+    public function buildMin(ActiveQuery $query, string $column): string
     {
         /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
-        return $this->build($query, "n=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ") if v==nil or n<v then v=n end", 'v');
+        return $this->build(
+            $query,
+            "n=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ") if v==nil or n<v then v=n end", 'v'
+        );
     }
 
     /**
-     * Builds a Lua script for finding the max value of a column
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $column name of the column
+     * Builds a Lua script for finding the max value of a column.
+     *
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $column name of the column.
+     *
      * @return string
      */
-    public function buildMax($query, $column)
+    public function buildMax(ActiveQuery $query, string $column): string
     {
-        /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        /** @var $modelClass ActiveRecord */
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix() . ':a:');
 
-        return $this->build($query, "n=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ") if v==nil or n>v then v=n end", 'v');
+        return $this->build(
+            $query,
+            "n=redis.call('HGET',$key .. pk," . $this->quoteValue($column) . ") if v==nil or n>v then v=n end", 'v'
+        );
     }
 
     /**
-     * @param ActiveQuery $query the query used to build the script
-     * @param string $buildResult the lua script for building the result
-     * @param string $return the lua variable that should be returned
-     * @throws NotSupportedException when query contains unsupported order by condition
+     * @param ActiveQuery $query the query used to build the script.
+     * @param string $buildResult the lua script for building the result.
+     * @param string $return the lua variable that should be returned.
+     *
+     * @throws NotSupportedException when query contains unsupported order by condition.
+     *
      * @return string
      */
-    private function build($query, $buildResult, $return)
+    private function build(ActiveQuery $query, string $buildResult, string $return): string
     {
         $columns = [];
-        if ($query->where !== null) {
-            $condition = $this->buildCondition($query->where, $columns);
+
+        if ($query->getWhere() !== null) {
+            $condition = $this->buildCondition($query->getWhere(), $columns);
         } else {
             $condition = 'true';
         }
 
-        $start = ($query->offset === null || $query->offset < 0) ? 0 : $query->offset;
-        $limitCondition = 'i>' . $start . (($query->limit === null || $query->limit < 0) ? '' : ' and i<=' . ($start + $query->limit));
+        $start = ($query->getOffset() === null || $query->getOffset() < 0) ? 0 : $query->getOffset();
+        $limitCondition = 'i>' . $start . (
+            ($query->getLimit() === null || $query->getLimit() < 0) ? '' : ' and i<=' . ($start + $query->getLimit())
+        );
 
-        /* @var $modelClass ActiveRecord */
-        $modelClass = $query->modelClass;
+        /** @var $modelClass ActiveRecord */
+        $modelClass = $query->getModelClass();
+
         $key = $this->quoteValue($modelClass::keyPrefix());
+
         $loadColumnValues = '';
+
         foreach ($columns as $column => $alias) {
-            $loadColumnValues .= "local $alias=redis.call('HGET',$key .. ':a:' .. pk, " . $this->quoteValue($column) . ")\n";
+            $loadColumnValues .= "local $alias=redis.call('HGET',$key .. ':a:' .. pk, "
+                . $this->quoteValue($column) . ")\n";
         }
 
         $getAllPks = <<<EOF
 local allpks=redis.call('LRANGE',$key,0,-1)
 EOF;
-        if (!empty($query->orderBy)) {
-            if (!is_array($query->orderBy) || count($query->orderBy) > 1) {
+        if (!empty($query->getOrderBy())) {
+            if (!is_array($query->getOrderBy()) || count($query->getOrderBy()) > 1) {
                 throw new NotSupportedException(
                     'orderBy by multiple columns is not currently supported by redis ActiveRecord.'
                 );
             }
 
-            $k = key($query->orderBy);
-            $v = $query->orderBy[$k];
+            $k = key($query->getOrderBy());
+            $v = $query->getOrderBy()[$k];
+
             if (is_numeric($k)) {
                 $orderColumn = $v;
                 $orderType = 'ASC';
@@ -210,16 +251,19 @@ EOF;
     }
 
     /**
-     * Adds a column to the list of columns to retrieve and creates an alias
-     * @param string $column the column name to add
-     * @param array $columns list of columns given by reference
-     * @return string the alias generated for the column name
+     * Adds a column to the list of columns to retrieve and creates an alias.
+     *
+     * @param string $column the column name to add.
+     * @param array $columns list of columns given by reference.
+     *
+     * @return string the alias generated for the column name.
      */
-    private function addColumn($column, &$columns)
+    private function addColumn(string $column, array &$columns): string
     {
         if (isset($columns[$column])) {
             return $columns[$column];
         }
+
         $name = 'c' . preg_replace("/[^a-z]+/i", "", $column) . count($columns);
 
         return $columns[$column] = $name;
@@ -227,29 +271,35 @@ EOF;
 
     /**
      * Quotes a string value for use in a query.
+     *
      * Note that if the parameter is not a string or int, it will be returned without change.
-     * @param string $str string to be quoted
-     * @return string the properly quoted string
+     *
+     * @param string $str string to be quoted.
+     *
+     * @return string|int the properly quoted string.
      */
-    private function quoteValue($str)
+    private function quoteValue($str): string
     {
         if (!is_string($str) && !is_int($str)) {
             return $str;
         }
 
-        return "'" . addcslashes($str, "\000\n\r\\\032\047") . "'";
+        return "'" . addcslashes((string) $str, "\000\n\r\\\032\047") . "'";
     }
 
     /**
      * Parses the condition specification and generates the corresponding Lua expression.
-     * @param string|array $condition the condition specification. Please refer to [[ActiveQuery::where()]]
-     * on how to specify a condition.
-     * @param array $columns the list of columns and aliases to be used
-     * @return string the generated SQL expression
-     * @throws \Yiisoft\Db\Exception if the condition is in bad format
-     * @throws \yii\exceptions\NotSupportedException if the condition is not an array
+     *
+     * @param string|array $condition the condition specification. Please refer to {@see ActiveQuery::where()} on how
+     * to specify a condition.
+     * @param array $columns the list of columns and aliases to be used.
+     *
+     * @throws Exception if the condition is in bad format.
+     * @throws NotSupportedException if the condition is not an array.
+     *
+     * @return string the generated SQL expression.
      */
-    public function buildCondition($condition, &$columns)
+    public function buildCondition($condition, array &$columns = []): string
     {
         static $builders = [
             'not' => 'buildNotCondition',
@@ -268,7 +318,8 @@ EOF;
         if (!is_array($condition)) {
             throw new NotSupportedException('Where condition must be an array in redis ActiveRecord.');
         }
-        if (isset($condition[0])) { // operator format: operator, operand 1, operand 2, ...
+        /** operator format: operator, operand 1, operand 2, ... */
+        if (isset($condition[0])) {
             $operator = strtolower($condition[0]);
             if (isset($builders[$operator])) {
                 $method = $builders[$operator];
@@ -278,8 +329,8 @@ EOF;
             } else {
                 throw new Exception('Found unknown operator in query: ' . $operator);
             }
-        } else { // hash format: 'column1' => 'value1', 'column2' => 'value2', ...
-
+        /** hash format: 'column1' => 'value1', 'column2' => 'value2', ... */
+        } else {
             return $this->buildHashCondition($condition, $columns);
         }
     }
@@ -287,21 +338,25 @@ EOF;
     private function buildHashCondition($condition, &$columns)
     {
         $parts = [];
+
         foreach ($condition as $column => $value) {
-            if (is_array($value)) { // IN condition
+            /** IN condition */
+            if (is_array($value)) {
                 $parts[] = $this->buildInCondition('in', [$column, $value], $columns);
             } else {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
                 if ($value === null) {
-                    $parts[] = "redis.call('HEXISTS',key .. ':a:' .. pk, ".$this->quoteValue($column).")==0";
+                    $parts[] = "redis.call('HEXISTS',key .. ':a:' .. pk, " . $this->quoteValue($column) . ")==0";
                 } elseif ($value instanceof Expression) {
                     $column = $this->addColumn($column, $columns);
-                    $parts[] = "$column==" . $value->expression;
+
+                    $parts[] = "$column==" . $value->getExpression();
                 } else {
                     $column = $this->addColumn($column, $columns);
-                    $value = $this->quoteValue($value);
+                    $value = $this->quoteValue((string) $value);
+
                     $parts[] = "$column==$value";
                 }
             }
@@ -317,6 +372,7 @@ EOF;
         }
 
         $operand = reset($operands);
+
         if (is_array($operand)) {
             $operand = $this->buildCondition($operand, $params);
         }
@@ -327,6 +383,7 @@ EOF;
     private function buildAndCondition($operator, $operands, &$columns)
     {
         $parts = [];
+
         foreach ($operands as $operand) {
             if (is_array($operand)) {
                 $operand = $this->buildCondition($operand, $columns);
@@ -335,6 +392,7 @@ EOF;
                 $parts[] = $operand;
             }
         }
+
         if (!empty($parts)) {
             return '(' . implode(") $operator (", $parts) . ')';
         } else {
@@ -348,13 +406,14 @@ EOF;
             throw new Exception("Operator '$operator' requires three operands.");
         }
 
-        list($column, $value1, $value2) = $operands;
+        [$column, $value1, $value2] = $operands;
 
         $value1 = $this->quoteValue($value1);
         $value2 = $this->quoteValue($value2);
         $column = $this->addColumn($column, $columns);
 
         $condition = "$column >= $value1 and $column <= $value2";
+
         return $operator === 'not between' ? "not ($condition)" : $condition;
     }
 
@@ -364,7 +423,7 @@ EOF;
             throw new Exception("Operator '$operator' requires two operands.");
         }
 
-        list($column, $values) = $operands;
+        [$column, $values] = $operands;
 
         $values = (array) $values;
 
@@ -377,14 +436,17 @@ EOF;
         } elseif (is_array($column)) {
             $column = reset($column);
         }
+
         $columnAlias = $this->addColumn($column, $columns);
         $parts = [];
+
         foreach ($values as $value) {
             if (is_array($value)) {
                 $value = isset($value[$column]) ? $value[$column] : null;
             }
+
             if ($value === null) {
-                $parts[] = "redis.call('HEXISTS',key .. ':a:' .. pk, ".$this->quoteValue($column).")==0";
+                $parts[] = "redis.call('HEXISTS',key .. ':a:' .. pk, " . $this->quoteValue($column) . ")==0";
             } elseif ($value instanceof Expression) {
                 $parts[] = "$columnAlias==" . $value->expression;
             } else {
@@ -392,6 +454,7 @@ EOF;
                 $parts[] = "$columnAlias==$value";
             }
         }
+
         $operator = $operator === 'in' ? '' : 'not ';
 
         return "$operator(" . implode(' or ', $parts) . ')';
@@ -400,6 +463,7 @@ EOF;
     protected function buildCompositeInCondition($operator, $inColumns, $values, &$columns)
     {
         $vss = [];
+
         foreach ($values as $value) {
             $vs = [];
             foreach ($inColumns as $column) {
@@ -407,11 +471,13 @@ EOF;
                     $columnAlias = $this->addColumn($column, $columns);
                     $vs[] = "$columnAlias==" . $this->quoteValue($value[$column]);
                 } else {
-                    $vs[] = "redis.call('HEXISTS',key .. ':a:' .. pk, ".$this->quoteValue($column).")==0";
+                    $vs[] = "redis.call('HEXISTS',key .. ':a:' .. pk, " . $this->quoteValue($column) . ")==0";
                 }
             }
+
             $vss[] = '(' . implode(' and ', $vs) . ')';
         }
+
         $operator = $operator === 'in' ? '' : 'not ';
 
         return "$operator(" . implode(' or ', $vss) . ')';

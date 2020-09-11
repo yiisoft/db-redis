@@ -2,6 +2,9 @@
 
 namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
+use Yiisoft\Db\Redis\ActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
+
 /**
  * Class Item
  *
@@ -11,10 +14,15 @@ namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
  */
 class Item extends ActiveRecord
 {
+    public function __construct()
+    {
+        BaseActiveRecord::connectionId('redis');
+    }
+
     /**
      * @inheritdoc
      */
-    public function attributes()
+    public function attributes(): array
     {
         return ['id', 'name', 'category_id'];
     }

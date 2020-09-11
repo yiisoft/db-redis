@@ -2,6 +2,8 @@
 
 namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
+use Yiisoft\Db\Redis\ActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
 use Yiisoft\Db\Redis\Tests\ActiveRecordTest;
 
 /**
@@ -28,10 +30,15 @@ class Customer extends ActiveRecord
 
     public $status2;
 
+    public function __construct()
+    {
+        BaseActiveRecord::connectionId('redis');
+    }
+
     /**
      * @inheritdoc
      */
-    public function attributes()
+    public function attributes(): array
     {
         return ['id', 'email', 'name', 'address', 'status', 'profile_id'];
     }

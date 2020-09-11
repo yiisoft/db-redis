@@ -2,6 +2,9 @@
 
 namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
+use Yiisoft\Db\Redis\ActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
+
 /**
  * Class Order
  *
@@ -12,10 +15,15 @@ namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
  */
 class OrderWithNullFK extends ActiveRecord
 {
+    public function __construct()
+    {
+        BaseActiveRecord::connectionId('redis');
+    }
+
     /**
      * @inheritdoc
      */
-    public static function primaryKey()
+    public static function primaryKey(): array
     {
         return ['id'];
     }
@@ -23,7 +31,7 @@ class OrderWithNullFK extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributes()
+    public function attributes(): array
     {
         return ['id', 'customer_id', 'created_at', 'total'];
     }

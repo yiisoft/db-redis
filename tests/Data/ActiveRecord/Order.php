@@ -2,6 +2,9 @@
 
 namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
 
+use Yiisoft\Db\Redis\ActiveRecord;
+use Yiisoft\ActiveRecord\BaseActiveRecord;
+
 /**
  * Order
  *
@@ -23,10 +26,15 @@ namespace Yiisoft\Db\Redis\Tests\Data\ActiveRecord;
  */
 class Order extends ActiveRecord
 {
+    public function __construct()
+    {
+        BaseActiveRecord::connectionId('redis');
+    }
+
     /**
      * @inheritdoc
      */
-    public function attributes()
+    public function attributes(): array
     {
         return ['id', 'customer_id', 'created_at', 'total'];
     }
@@ -124,19 +132,5 @@ class Order extends ActiveRecord
         return $this->hasMany(Item::class, ['id' => 'item_id'])
             ->via('orderItemsWithNullFK')
             ->where(['category_id' => 1]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $this->created_at = time();
-
-            return true;
-        } else {
-            return false;
-        }
     }
 }
