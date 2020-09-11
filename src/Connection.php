@@ -727,6 +727,7 @@ class Connection extends Component implements ConnectionInterface
                 } else {
                     return $line;
                 }
+                // no break
             case '-': // Error reply
                 throw new Exception("Redis error: " . $line . "\nRedis command was: " . $command);
             case ':': // Integer reply
