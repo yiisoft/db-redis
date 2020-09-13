@@ -11,12 +11,10 @@ use Yiisoft\Db\Redis\Tests\Event\AfterCustom;
 /**
  * @group redis
  */
-class RedisConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     protected function tearDown(): void
     {
-        //$this->getConnection()->close();
-
         parent::tearDown();
     }
 

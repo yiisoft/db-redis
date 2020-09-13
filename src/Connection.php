@@ -11,10 +11,34 @@ use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Command\Command;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
+use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Redis\Event\AfterOpen;
 use Yiisoft\Db\Schema\Schema;
 use Yiisoft\Db\Schema\TableSchema;
 use Yiisoft\Strings\Inflector;
+use Yiisoft\VarDumper\VarDumper;
+
+use function array_keys;
+use function array_merge;
+use function count;
+use function explode;
+use function fclose;
+use function fgets;
+use function fread;
+use function fwrite;
+use function get_class;
+use function get_object_vars;
+use function implode;
+use function in_array;
+use function ini_get;
+use function mb_strlen;
+use function mb_substr;
+use function preg_split;
+use function stream_set_timeout;
+use function stream_socket_enable_crypto;
+use function strtoupper;
+use function usleep;
+use function version_compare;
 
 final class Connection implements ConnectionInterface
 {
@@ -306,11 +330,12 @@ final class Connection implements ConnectionInterface
 
     /**
      * Establishes a DB connection.
+     *
      * It does nothing if a DB connection has already been established.
      *
      * @throws Exception if connection fails
      */
-    public function open()
+    public function open(): void
     {
         if ($this->getSocket() !== false) {
             return;
@@ -324,7 +349,7 @@ final class Connection implements ConnectionInterface
             $this->getConnectionString(),
             $errorNumber,
             $errorDescription,
-            $this->connectionTimeout !== null ? $this->connectionTimeout : (float) ini_get('default_socket_timeout'),
+            $this->connectionTimeout ?? (float) ini_get('default_socket_timeout'),
             $this->socketClientFlags
         );
 
@@ -332,7 +357,9 @@ final class Connection implements ConnectionInterface
             $this->pool[ $this->getConnectionString() ] = $socket;
 
             if ($this->dataTimeout !== null) {
-                stream_set_timeout($socket, $timeout = (int) $this->dataTimeout, (int) (($this->dataTimeout - $timeout) * 1000000));
+                stream_set_timeout(
+                    $socket, $timeout = (int) $this->dataTimeout, (int) (($this->dataTimeout - $timeout) * 1000000)
+                );
             }
 
             if ($this->useSSL) {
@@ -377,7 +404,7 @@ final class Connection implements ConnectionInterface
             try {
                 $this->executeCommand('QUIT');
             } catch (SocketException $e) {
-                /* ignore errors when quitting a closed connection. */
+                /** ignore errors when quitting a closed connection. */
             }
 
             fclose($socket);
@@ -414,13 +441,15 @@ final class Connection implements ConnectionInterface
      * @param string $name name of the missing method to execute.
      * @param array $params method call arguments.
      *
+     * @throws Exception
+     *
      * @return mixed
      */
-    public function __call($name, $params)
+    public function __call(string $name, array $params)
     {
         $redisCommand = strtoupper((new Inflector())->toWords($name, false));
 
-        if (in_array($redisCommand, $this->redisCommands)) {
+        if (in_array($redisCommand, $this->redisCommands, true)) {
             return $this->executeCommand($redisCommand, $params);
         }
     }
@@ -451,7 +480,7 @@ final class Connection implements ConnectionInterface
      * - `string` or `null` for commands that return "bulk reply".
      * - `array` for commands that return "Multi-bulk replies".
      *
-     * {@see [redis protocol description](https://redis.io/topics/protocol)}
+     * See [redis protocol description](https://redis.io/topics/protocol)
      *
      * for details on the mentioned reply types.
      */
@@ -500,9 +529,15 @@ final class Connection implements ConnectionInterface
     /**
      * Sends RAW command string to the server.
      *
+     * @param string $command
+     * @param array $params
+     *
+     * @throws Exception
      * @throws SocketException on connection error.
+     *
+     * @return array|bool|false|mixed|string|null
      */
-    private function sendCommandInternal($command, $params)
+    private function sendCommandInternal(string $command, array $params = [])
     {
         $written = @fwrite($this->getSocket(), $command);
 
@@ -516,14 +551,7 @@ final class Connection implements ConnectionInterface
         return $this->parseResponse($params, $command);
     }
 
-    /**
-     * @param array $params
-     * @param string|null $command
-     * @return mixed
-     * @throws Exception on error
-     * @throws SocketException
-     */
-    private function parseResponse($params, $command = null)
+    private function parseResponse(array $params, ?string $command = null)
     {
         $prettyCommand = implode(' ', $params);
 
@@ -542,7 +570,6 @@ final class Connection implements ConnectionInterface
 
                 return $line;
             case '-': // Error reply
-
                 if ($this->isRedirect($line)) {
                     return $this->redirect($line, $command, $params);
                 }
@@ -552,11 +579,13 @@ final class Connection implements ConnectionInterface
                 // no cast to int as it is in the range of a signed 64 bit integer
                 return $line;
             case '$': // Bulk replies
-                if ($line == '-1') {
+                if ($line === '-1') {
                     return null;
                 }
+
                 $length = (int)$line + 2;
                 $data = '';
+
                 while ($length > 0) {
                     if (($block = fread($this->getSocket(), $length)) === false) {
                         throw new SocketException("Failed to read from socket.\nRedis command was: " . $prettyCommand);
@@ -575,28 +604,18 @@ final class Connection implements ConnectionInterface
 
                 return $data;
             default:
-                throw new Exception('Received illegal data from redis: ' . $line . "\nRedis command was: " . $prettyCommand);
+                throw new Exception(
+                    'Received illegal data from redis: ' . $line . "\nRedis command was: " . $prettyCommand
+                );
         }
     }
 
-    /**
-     * @param string $line
-     * @return bool
-     */
-    private function isRedirect($line)
+    private function isRedirect(string $line): bool
     {
         return is_string($line) && mb_strpos($line, 'MOVED') === 0;
     }
 
-    /**
-     * @param string $redirect
-     * @param string $command
-     * @param array $params
-     * @return mixed
-     * @throws Exception
-     * @throws SocketException
-     */
-    private function redirect($redirect, $command, $params)
+    private function redirect(string $redirect, string $command, array $params = [])
     {
         $responseParts = preg_split('/\s+/', $redirect);
 
@@ -609,7 +628,7 @@ final class Connection implements ConnectionInterface
 
             $response = $this->sendCommandInternal($command, $params);
 
-            $this->redirectConnectionString = null;
+            $this->redirectConnectionString = '';
 
             return $response;
         }
@@ -628,6 +647,7 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return int the redis database to use. This is an integer value starting from 0. Defaults to 0.
+     *
      * You can disable the SELECT command sent after connection by setting this property to `null`.
      */
     public function getDatabase(): ?int
@@ -636,7 +656,8 @@ final class Connection implements ConnectionInterface
     }
 
     /**
-     * @return float timeout to use for redis socket when reading and writing data. If not set the php default value will be used.
+     * @return float timeout to use for redis socket when reading and writing data. If not set the php default value
+     * will be used.
      */
     public function getDataTimeout(): ?float
     {
@@ -645,6 +666,7 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
+     *
      * If {@see unixSocket} is specified, hostname and {@see port} will be ignored.
      */
     public function getHostname(): string
@@ -672,6 +694,7 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return int the port to use for connecting to the redis server. Default port is 6379.
+     *
      * If {@see unixSocket} is specified, {@see hostname} and port will be ignored.
      */
     public function getPort(): int
@@ -699,7 +722,9 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return int The number of times a command execution should be retried when a connection failure occurs.
+     *
      * This is used in {@see executeCommand()} when a {@see SocketException} is thrown.
+     *
      * Defaults to 0 meaning no retries on failure.
      */
     public function getRetries(): int
@@ -709,7 +734,9 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return int The retry interval in microseconds to wait between retry.
+     *
      * This is used in {@see executeCommand()} when a {@see SocketException} is thrown.
+     *
      * Defaults to 0 meaning no wait.
      */
     public function getRetryInterval(): int
@@ -751,8 +778,8 @@ final class Connection implements ConnectionInterface
 
     /**
      * @return string the unix socket path (e.g. `/var/run/redis/redis.sock`) to use for connecting to the redis server.
-     * This can be used instead of {@see hostname} and {@see port} to connect to the server using a unix socket.
-     * If a unix socket path is specified, {@see hostname} and {@see port} will be ignored.
+     * This can be used instead of {@see hostname} and {@see port} to connect to the server using a unix socket. If a
+     * unix socket path is specified, {@see hostname} and {@see port} will be ignored.
      */
     public function getUnixSocket(): string
     {
@@ -849,8 +876,7 @@ final class Connection implements ConnectionInterface
      * @param string|null $sql the SQL statement to be executed
      * @param array $params the parameters to be bound to the SQL statement
      *
-     * @throws Exception
-     * @throws InvalidConfigException
+     * @throws NotSupportedException
      *
      * @return Command the DB command
      */
@@ -873,15 +899,19 @@ final class Connection implements ConnectionInterface
     /**
      * Returns the schema information for the database opened by this connection.
      *
+     * @throws NotSupportedException
+     *
      * @return Schema the schema information for the database opened by this connection.
      */
     public function getSchema(): Schema
     {
-        throw new NotSupportedException(get_class($this) . ' does not support Shema::class.');
+        throw new NotSupportedException(get_class($this) . ' does not support Schema::class.');
     }
 
     /**
-     * Returns a server version as a string comparable by {@see \version_compare()}.
+     * Returns a server version as a string comparable by {@see version_compare()}.
+     *
+     * @throws Exception
      *
      * @return string server version as a string.
      */
@@ -898,6 +928,8 @@ final class Connection implements ConnectionInterface
      * @param string $name table name.
      * @param bool $refresh whether to reload the table schema even if it is found in the cache.
      *
+     * @throws NotSupportedException
+     *
      * @return TableSchema|null
      */
     public function getTableSchema($name, $refresh = false): ?TableSchema
@@ -911,7 +943,7 @@ final class Connection implements ConnectionInterface
      *
      * @param bool $value
      *
-     * @return void
+     * @throws NotSupportedException
      */
     public function setEnableSlaves(bool $value): void
     {
