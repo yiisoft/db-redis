@@ -39,8 +39,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Db\\Redis\\Tests\\": "tests/",
-            "Yiisoft\\Cache\\Tests\\": "vendor/yiisoft/cache/tests/"
+            "Yiisoft\\Db\\Redis\\Tests\\": "tests/"
         }
     },
     "extra": {
