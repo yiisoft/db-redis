@@ -1,12 +1,12 @@
 <p align="center">
     <a href="http://redis.io/" target="_blank" rel="external">
-        <img src="https://redis.io/images/redis-white.png" height="100px">
+        <img src="https://download.redis.io/redis.png" height="100px">
     </a>
-    <h1 align="center">Yii DataBase Redis Extension</h1>
+    <h1 align="center">Yii DBAL Redis connection</h1>
     <br>
 </p>
 
-This extension provides the [redis](http://redis.io/) key-value store support for the [Yii framework](http://www.yiiframework.com).
+This extension provides the [redis](http://redis.io/) connection support for the [Yii framework](http://www.yiiframework.com).
 
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/db-redis/v/stable.png)](https://packagist.org/packages/yiisoft/db-redis)
 [![Total Downloads](https://poser.pugx.org/yiisoft/db-redis/downloads.png)](https://packagist.org/packages/yiisoft/db-redis)
