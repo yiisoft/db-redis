@@ -358,7 +358,9 @@ final class Connection implements ConnectionInterface
 
             if ($this->dataTimeout !== null) {
                 stream_set_timeout(
-                    $socket, $timeout = (int) $this->dataTimeout, (int) (($this->dataTimeout - $timeout) * 1000000)
+                    $socket,
+                    $timeout = (int) $this->dataTimeout,
+                    (int) (($this->dataTimeout - $timeout) * 1000000)
                 );
             }
 
