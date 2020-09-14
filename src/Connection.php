@@ -1,311 +1,60 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
+
+declare(strict_types=1);
 
 namespace Yiisoft\Db\Redis;
 
-use yii\base\Component;
-use Yiisoft\Db\ConnectionInterface;
-use Yiisoft\Db\Exception;
-use yii\helpers\Yii;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Yiisoft\Arrays\ArrayHelper;
+use Yiisoft\Db\Command\Command;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\Exception;
+use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Db\Redis\Event\AfterOpen;
+use Yiisoft\Db\Schema\Schema;
+use Yiisoft\Db\Schema\TableSchema;
 use Yiisoft\Strings\Inflector;
+use Yiisoft\VarDumper\VarDumper;
 
-/**
- * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.
- *
- * By default it assumes there is a redis server running on localhost at port 6379 and uses the database number 0.
- *
- * It is possible to connect to a redis server using [[hostname]] and [[port]] or using a [[unixSocket]].
- *
- * It also supports [the AUTH command](http://redis.io/commands/auth) of redis.
- * When the server needs authentication, you can set the [[password]] property to
- * authenticate with the server after connect.
- *
- * The execution of [redis commands](http://redis.io/commands) is possible with via [[executeCommand()]].
- *
- * @method mixed append($key, $value) Append a value to a key. <https://redis.io/commands/append>
- * @method mixed auth($password) Authenticate to the server. <https://redis.io/commands/auth>
- * @method mixed bgrewriteaof() Asynchronously rewrite the append-only file. <https://redis.io/commands/bgrewriteaof>
- * @method mixed bgsave() Asynchronously save the dataset to disk. <https://redis.io/commands/bgsave>
- * @method mixed bitcount($key, $start = null, $end = null) Count set bits in a string. <https://redis.io/commands/bitcount>
- * @method mixed bitfield($key, ...$operations) Perform arbitrary bitfield integer operations on strings. <https://redis.io/commands/bitfield>
- * @method mixed bitop($operation, $destkey, ...$keys) Perform bitwise operations between strings. <https://redis.io/commands/bitop>
- * @method mixed bitpos($key, $bit, $start = null, $end = null) Find first bit set or clear in a string. <https://redis.io/commands/bitpos>
- * @method mixed blpop(...$keys, $timeout) Remove and get the first element in a list, or block until one is available. <https://redis.io/commands/blpop>
- * @method mixed brpop(...$keys, $timeout) Remove and get the last element in a list, or block until one is available. <https://redis.io/commands/brpop>
- * @method mixed brpoplpush($source, $destination, $timeout) Pop a value from a list, push it to another list and return it; or block until one is available. <https://redis.io/commands/brpoplpush>
- * @method mixed clientKill(...$filters) Kill the connection of a client. <https://redis.io/commands/client-kill>
- * @method mixed clientList() Get the list of client connections. <https://redis.io/commands/client-list>
- * @method mixed clientGetname() Get the current connection name. <https://redis.io/commands/client-getname>
- * @method mixed clientPause($timeout) Stop processing commands from clients for some time. <https://redis.io/commands/client-pause>
- * @method mixed clientReply($option) Instruct the server whether to reply to commands. <https://redis.io/commands/client-reply>
- * @method mixed clientSetname($connectionName) Set the current connection name. <https://redis.io/commands/client-setname>
- * @method mixed clusterAddslots(...$slots) Assign new hash slots to receiving node. <https://redis.io/commands/cluster-addslots>
- * @method mixed clusterCountkeysinslot($slot) Return the number of local keys in the specified hash slot. <https://redis.io/commands/cluster-countkeysinslot>
- * @method mixed clusterDelslots(...$slots) Set hash slots as unbound in receiving node. <https://redis.io/commands/cluster-delslots>
- * @method mixed clusterFailover($option = null) Forces a slave to perform a manual failover of its master.. <https://redis.io/commands/cluster-failover>
- * @method mixed clusterForget($nodeId) Remove a node from the nodes table. <https://redis.io/commands/cluster-forget>
- * @method mixed clusterGetkeysinslot($slot, $count) Return local key names in the specified hash slot. <https://redis.io/commands/cluster-getkeysinslot>
- * @method mixed clusterInfo() Provides info about Redis Cluster node state. <https://redis.io/commands/cluster-info>
- * @method mixed clusterKeyslot($key) Returns the hash slot of the specified key. <https://redis.io/commands/cluster-keyslot>
- * @method mixed clusterMeet($ip, $port) Force a node cluster to handshake with another node. <https://redis.io/commands/cluster-meet>
- * @method mixed clusterNodes() Get Cluster config for the node. <https://redis.io/commands/cluster-nodes>
- * @method mixed clusterReplicate($nodeId) Reconfigure a node as a slave of the specified master node. <https://redis.io/commands/cluster-replicate>
- * @method mixed clusterReset($resetType = "SOFT") Reset a Redis Cluster node. <https://redis.io/commands/cluster-reset>
- * @method mixed clusterSaveconfig() Forces the node to save cluster state on disk. <https://redis.io/commands/cluster-saveconfig>
- * @method mixed clusterSetslot($slot, $type, $nodeid = null) Bind a hash slot to a specific node. <https://redis.io/commands/cluster-setslot>
- * @method mixed clusterSlaves($nodeId) List slave nodes of the specified master node. <https://redis.io/commands/cluster-slaves>
- * @method mixed clusterSlots() Get array of Cluster slot to node mappings. <https://redis.io/commands/cluster-slots>
- * @method mixed command() Get array of Redis command details. <https://redis.io/commands/command>
- * @method mixed commandCount() Get total number of Redis commands. <https://redis.io/commands/command-count>
- * @method mixed commandGetkeys() Extract keys given a full Redis command. <https://redis.io/commands/command-getkeys>
- * @method mixed commandInfo(...$commandNames) Get array of specific Redis command details. <https://redis.io/commands/command-info>
- * @method mixed configGet($parameter) Get the value of a configuration parameter. <https://redis.io/commands/config-get>
- * @method mixed configRewrite() Rewrite the configuration file with the in memory configuration. <https://redis.io/commands/config-rewrite>
- * @method mixed configSet($parameter, $value) Set a configuration parameter to the given value. <https://redis.io/commands/config-set>
- * @method mixed configResetstat() Reset the stats returned by INFO. <https://redis.io/commands/config-resetstat>
- * @method mixed dbsize() Return the number of keys in the selected database. <https://redis.io/commands/dbsize>
- * @method mixed debugObject($key) Get debugging information about a key. <https://redis.io/commands/debug-object>
- * @method mixed debugSegfault() Make the server crash. <https://redis.io/commands/debug-segfault>
- * @method mixed decr($key) Decrement the integer value of a key by one. <https://redis.io/commands/decr>
- * @method mixed decrby($key, $decrement) Decrement the integer value of a key by the given number. <https://redis.io/commands/decrby>
- * @method mixed del(...$keys) Delete a key. <https://redis.io/commands/del>
- * @method mixed discard() Discard all commands issued after MULTI. <https://redis.io/commands/discard>
- * @method mixed dump($key) Return a serialized version of the value stored at the specified key.. <https://redis.io/commands/dump>
- * @method mixed echo($message) Echo the given string. <https://redis.io/commands/echo>
- * @method mixed eval($script, $numkeys, ...$keys, ...$args) Execute a Lua script server side. <https://redis.io/commands/eval>
- * @method mixed evalsha($sha1, $numkeys, ...$keys, ...$args) Execute a Lua script server side. <https://redis.io/commands/evalsha>
- * @method mixed exec() Execute all commands issued after MULTI. <https://redis.io/commands/exec>
- * @method mixed exists(...$keys) Determine if a key exists. <https://redis.io/commands/exists>
- * @method mixed expire($key, $seconds) Set a key's time to live in seconds. <https://redis.io/commands/expire>
- * @method mixed expireat($key, $timestamp) Set the expiration for a key as a UNIX timestamp. <https://redis.io/commands/expireat>
- * @method mixed flushall($ASYNC = null) Remove all keys from all databases. <https://redis.io/commands/flushall>
- * @method mixed flushdb($ASYNC = null) Remove all keys from the current database. <https://redis.io/commands/flushdb>
- * @method mixed geoadd($key, $longitude, $latitude, $member, ...$more) Add one or more geospatial items in the geospatial index represented using a sorted set. <https://redis.io/commands/geoadd>
- * @method mixed geohash($key, ...$members) Returns members of a geospatial index as standard geohash strings. <https://redis.io/commands/geohash>
- * @method mixed geopos($key, ...$members) Returns longitude and latitude of members of a geospatial index. <https://redis.io/commands/geopos>
- * @method mixed geodist($key, $member1, $member2, $unit = null) Returns the distance between two members of a geospatial index. <https://redis.io/commands/geodist>
- * @method mixed georadius($key, $longitude, $latitude, $radius, $metric, ...$options) Query a sorted set representing a geospatial index to fetch members matching a given maximum distance from a point. <https://redis.io/commands/georadius>
- * @method mixed georadiusbymember($key, $member, $radius, $metric, ...$options) Query a sorted set representing a geospatial index to fetch members matching a given maximum distance from a member. <https://redis.io/commands/georadiusbymember>
- * @method mixed get($key) Get the value of a key. <https://redis.io/commands/get>
- * @method mixed getbit($key, $offset) Returns the bit value at offset in the string value stored at key. <https://redis.io/commands/getbit>
- * @method mixed getrange($key, $start, $end) Get a substring of the string stored at a key. <https://redis.io/commands/getrange>
- * @method mixed getset($key, $value) Set the string value of a key and return its old value. <https://redis.io/commands/getset>
- * @method mixed hdel($key, ...$fields) Delete one or more hash fields. <https://redis.io/commands/hdel>
- * @method mixed hexists($key, $field) Determine if a hash field exists. <https://redis.io/commands/hexists>
- * @method mixed hget($key, $field) Get the value of a hash field. <https://redis.io/commands/hget>
- * @method mixed hgetall($key) Get all the fields and values in a hash. <https://redis.io/commands/hgetall>
- * @method mixed hincrby($key, $field, $increment) Increment the integer value of a hash field by the given number. <https://redis.io/commands/hincrby>
- * @method mixed hincrbyfloat($key, $field, $increment) Increment the float value of a hash field by the given amount. <https://redis.io/commands/hincrbyfloat>
- * @method mixed hkeys($key) Get all the fields in a hash. <https://redis.io/commands/hkeys>
- * @method mixed hlen($key) Get the number of fields in a hash. <https://redis.io/commands/hlen>
- * @method mixed hmget($key, ...$fields) Get the values of all the given hash fields. <https://redis.io/commands/hmget>
- * @method mixed hmset($key, $field, $value, ...$more) Set multiple hash fields to multiple values. <https://redis.io/commands/hmset>
- * @method mixed hset($key, $field, $value) Set the string value of a hash field. <https://redis.io/commands/hset>
- * @method mixed hsetnx($key, $field, $value) Set the value of a hash field, only if the field does not exist. <https://redis.io/commands/hsetnx>
- * @method mixed hstrlen($key, $field) Get the length of the value of a hash field. <https://redis.io/commands/hstrlen>
- * @method mixed hvals($key) Get all the values in a hash. <https://redis.io/commands/hvals>
- * @method mixed incr($key) Increment the integer value of a key by one. <https://redis.io/commands/incr>
- * @method mixed incrby($key, $increment) Increment the integer value of a key by the given amount. <https://redis.io/commands/incrby>
- * @method mixed incrbyfloat($key, $increment) Increment the float value of a key by the given amount. <https://redis.io/commands/incrbyfloat>
- * @method mixed info($section = null) Get information and statistics about the server. <https://redis.io/commands/info>
- * @method mixed keys($pattern) Find all keys matching the given pattern. <https://redis.io/commands/keys>
- * @method mixed lastsave() Get the UNIX time stamp of the last successful save to disk. <https://redis.io/commands/lastsave>
- * @method mixed lindex($key, $index) Get an element from a list by its index. <https://redis.io/commands/lindex>
- * @method mixed linsert($key, $where, $pivot, $value) Insert an element before or after another element in a list. <https://redis.io/commands/linsert>
- * @method mixed llen($key) Get the length of a list. <https://redis.io/commands/llen>
- * @method mixed lpop($key) Remove and get the first element in a list. <https://redis.io/commands/lpop>
- * @method mixed lpush($key, ...$values) Prepend one or multiple values to a list. <https://redis.io/commands/lpush>
- * @method mixed lpushx($key, $value) Prepend a value to a list, only if the list exists. <https://redis.io/commands/lpushx>
- * @method mixed lrange($key, $start, $stop) Get a range of elements from a list. <https://redis.io/commands/lrange>
- * @method mixed lrem($key, $count, $value) Remove elements from a list. <https://redis.io/commands/lrem>
- * @method mixed lset($key, $index, $value) Set the value of an element in a list by its index. <https://redis.io/commands/lset>
- * @method mixed ltrim($key, $start, $stop) Trim a list to the specified range. <https://redis.io/commands/ltrim>
- * @method mixed mget(...$keys) Get the values of all the given keys. <https://redis.io/commands/mget>
- * @method mixed migrate($host, $port, $key, $destinationDb, $timeout, ...$options) Atomically transfer a key from a Redis instance to another one.. <https://redis.io/commands/migrate>
- * @method mixed monitor() Listen for all requests received by the server in real time. <https://redis.io/commands/monitor>
- * @method mixed move($key, $db) Move a key to another database. <https://redis.io/commands/move>
- * @method mixed mset(...$keyValuePairs) Set multiple keys to multiple values. <https://redis.io/commands/mset>
- * @method mixed msetnx(...$keyValuePairs) Set multiple keys to multiple values, only if none of the keys exist. <https://redis.io/commands/msetnx>
- * @method mixed multi() Mark the start of a transaction block. <https://redis.io/commands/multi>
- * @method mixed object($subcommand, ...$argumentss) Inspect the internals of Redis objects. <https://redis.io/commands/object>
- * @method mixed persist($key) Remove the expiration from a key. <https://redis.io/commands/persist>
- * @method mixed pexpire($key, $milliseconds) Set a key's time to live in milliseconds. <https://redis.io/commands/pexpire>
- * @method mixed pexpireat($key, $millisecondsTimestamp) Set the expiration for a key as a UNIX timestamp specified in milliseconds. <https://redis.io/commands/pexpireat>
- * @method mixed pfadd($key, ...$elements) Adds the specified elements to the specified HyperLogLog.. <https://redis.io/commands/pfadd>
- * @method mixed pfcount(...$keys) Return the approximated cardinality of the set(s) observed by the HyperLogLog at key(s).. <https://redis.io/commands/pfcount>
- * @method mixed pfmerge($destkey, ...$sourcekeys) Merge N different HyperLogLogs into a single one.. <https://redis.io/commands/pfmerge>
- * @method mixed ping($message = null) Ping the server. <https://redis.io/commands/ping>
- * @method mixed psetex($key, $milliseconds, $value) Set the value and expiration in milliseconds of a key. <https://redis.io/commands/psetex>
- * @method mixed psubscribe(...$patterns) Listen for messages published to channels matching the given patterns. <https://redis.io/commands/psubscribe>
- * @method mixed pubsub($subcommand, ...$arguments) Inspect the state of the Pub/Sub subsystem. <https://redis.io/commands/pubsub>
- * @method mixed pttl($key) Get the time to live for a key in milliseconds. <https://redis.io/commands/pttl>
- * @method mixed publish($channel, $message) Post a message to a channel. <https://redis.io/commands/publish>
- * @method mixed punsubscribe(...$patterns) Stop listening for messages posted to channels matching the given patterns. <https://redis.io/commands/punsubscribe>
- * @method mixed quit() Close the connection. <https://redis.io/commands/quit>
- * @method mixed randomkey() Return a random key from the keyspace. <https://redis.io/commands/randomkey>
- * @method mixed readonly() Enables read queries for a connection to a cluster slave node. <https://redis.io/commands/readonly>
- * @method mixed readwrite() Disables read queries for a connection to a cluster slave node. <https://redis.io/commands/readwrite>
- * @method mixed rename($key, $newkey) Rename a key. <https://redis.io/commands/rename>
- * @method mixed renamenx($key, $newkey) Rename a key, only if the new key does not exist. <https://redis.io/commands/renamenx>
- * @method mixed restore($key, $ttl, $serializedValue, $REPLACE = null) Create a key using the provided serialized value, previously obtained using DUMP.. <https://redis.io/commands/restore>
- * @method mixed role() Return the role of the instance in the context of replication. <https://redis.io/commands/role>
- * @method mixed rpop($key) Remove and get the last element in a list. <https://redis.io/commands/rpop>
- * @method mixed rpoplpush($source, $destination) Remove the last element in a list, prepend it to another list and return it. <https://redis.io/commands/rpoplpush>
- * @method mixed rpush($key, ...$values) Append one or multiple values to a list. <https://redis.io/commands/rpush>
- * @method mixed rpushx($key, $value) Append a value to a list, only if the list exists. <https://redis.io/commands/rpushx>
- * @method mixed sadd($key, ...$members) Add one or more members to a set. <https://redis.io/commands/sadd>
- * @method mixed save() Synchronously save the dataset to disk. <https://redis.io/commands/save>
- * @method mixed scard($key) Get the number of members in a set. <https://redis.io/commands/scard>
- * @method mixed scriptDebug($option) Set the debug mode for executed scripts.. <https://redis.io/commands/script-debug>
- * @method mixed scriptExists(...$sha1s) Check existence of scripts in the script cache.. <https://redis.io/commands/script-exists>
- * @method mixed scriptFlush() Remove all the scripts from the script cache.. <https://redis.io/commands/script-flush>
- * @method mixed scriptKill() Kill the script currently in execution.. <https://redis.io/commands/script-kill>
- * @method mixed scriptLoad($script) Load the specified Lua script into the script cache.. <https://redis.io/commands/script-load>
- * @method mixed sdiff(...$keys) Subtract multiple sets. <https://redis.io/commands/sdiff>
- * @method mixed sdiffstore($destination, ...$keys) Subtract multiple sets and store the resulting set in a key. <https://redis.io/commands/sdiffstore>
- * @method mixed select($index) Change the selected database for the current connection. <https://redis.io/commands/select>
- * @method mixed set($key, $value, ...$options) Set the string value of a key. <https://redis.io/commands/set>
- * @method mixed setbit($key, $offset, $value) Sets or clears the bit at offset in the string value stored at key. <https://redis.io/commands/setbit>
- * @method mixed setex($key, $seconds, $value) Set the value and expiration of a key. <https://redis.io/commands/setex>
- * @method mixed setnx($key, $value) Set the value of a key, only if the key does not exist. <https://redis.io/commands/setnx>
- * @method mixed setrange($key, $offset, $value) Overwrite part of a string at key starting at the specified offset. <https://redis.io/commands/setrange>
- * @method mixed shutdown($saveOption = null) Synchronously save the dataset to disk and then shut down the server. <https://redis.io/commands/shutdown>
- * @method mixed sinter(...$keys) Intersect multiple sets. <https://redis.io/commands/sinter>
- * @method mixed sinterstore($destination, ...$keys) Intersect multiple sets and store the resulting set in a key. <https://redis.io/commands/sinterstore>
- * @method mixed sismember($key, $member) Determine if a given value is a member of a set. <https://redis.io/commands/sismember>
- * @method mixed slaveof($host, $port) Make the server a slave of another instance, or promote it as master. <https://redis.io/commands/slaveof>
- * @method mixed slowlog($subcommand, $argument = null) Manages the Redis slow queries log. <https://redis.io/commands/slowlog>
- * @method mixed smembers($key) Get all the members in a set. <https://redis.io/commands/smembers>
- * @method mixed smove($source, $destination, $member) Move a member from one set to another. <https://redis.io/commands/smove>
- * @method mixed sort($key, ...$options) Sort the elements in a list, set or sorted set. <https://redis.io/commands/sort>
- * @method mixed spop($key, $count = null) Remove and return one or multiple random members from a set. <https://redis.io/commands/spop>
- * @method mixed srandmember($key, $count = null) Get one or multiple random members from a set. <https://redis.io/commands/srandmember>
- * @method mixed srem($key, ...$members) Remove one or more members from a set. <https://redis.io/commands/srem>
- * @method mixed strlen($key) Get the length of the value stored in a key. <https://redis.io/commands/strlen>
- * @method mixed subscribe(...$channels) Listen for messages published to the given channels. <https://redis.io/commands/subscribe>
- * @method mixed sunion(...$keys) Add multiple sets. <https://redis.io/commands/sunion>
- * @method mixed sunionstore($destination, ...$keys) Add multiple sets and store the resulting set in a key. <https://redis.io/commands/sunionstore>
- * @method mixed swapdb($index, $index) Swaps two Redis databases. <https://redis.io/commands/swapdb>
- * @method mixed sync() Internal command used for replication. <https://redis.io/commands/sync>
- * @method mixed time() Return the current server time. <https://redis.io/commands/time>
- * @method mixed touch(...$keys) Alters the last access time of a key(s). Returns the number of existing keys specified.. <https://redis.io/commands/touch>
- * @method mixed ttl($key) Get the time to live for a key. <https://redis.io/commands/ttl>
- * @method mixed type($key) Determine the type stored at key. <https://redis.io/commands/type>
- * @method mixed unsubscribe(...$channels) Stop listening for messages posted to the given channels. <https://redis.io/commands/unsubscribe>
- * @method mixed unlink(...$keys) Delete a key asynchronously in another thread. Otherwise it is just as DEL, but non blocking.. <https://redis.io/commands/unlink>
- * @method mixed unwatch() Forget about all watched keys. <https://redis.io/commands/unwatch>
- * @method mixed wait($numslaves, $timeout) Wait for the synchronous replication of all the write commands sent in the context of the current connection. <https://redis.io/commands/wait>
- * @method mixed watch(...$keys) Watch the given keys to determine execution of the MULTI/EXEC block. <https://redis.io/commands/watch>
- * @method mixed zadd($key, ...$options) Add one or more members to a sorted set, or update its score if it already exists. <https://redis.io/commands/zadd>
- * @method mixed zcard($key) Get the number of members in a sorted set. <https://redis.io/commands/zcard>
- * @method mixed zcount($key, $min, $max) Count the members in a sorted set with scores within the given values. <https://redis.io/commands/zcount>
- * @method mixed zincrby($key, $increment, $member) Increment the score of a member in a sorted set. <https://redis.io/commands/zincrby>
- * @method mixed zinterstore($destination, $numkeys, $key, ...$options) Intersect multiple sorted sets and store the resulting sorted set in a new key. <https://redis.io/commands/zinterstore>
- * @method mixed zlexcount($key, $min, $max) Count the number of members in a sorted set between a given lexicographical range. <https://redis.io/commands/zlexcount>
- * @method mixed zrange($key, $start, $stop, $WITHSCORES = null) Return a range of members in a sorted set, by index. <https://redis.io/commands/zrange>
- * @method mixed zrangebylex($key, $min, $max, $LIMIT = null, $offset = null, $count = null) Return a range of members in a sorted set, by lexicographical range. <https://redis.io/commands/zrangebylex>
- * @method mixed zrevrangebylex($key, $max, $min, $LIMIT = null, $offset = null, $count = null) Return a range of members in a sorted set, by lexicographical range, ordered from higher to lower strings.. <https://redis.io/commands/zrevrangebylex>
- * @method mixed zrangebyscore($key, $min, $max, $WITHSCORES = null, $LIMIT = null, $offset = null, $count = null) Return a range of members in a sorted set, by score. <https://redis.io/commands/zrangebyscore>
- * @method mixed zrank($key, $member) Determine the index of a member in a sorted set. <https://redis.io/commands/zrank>
- * @method mixed zrem($key, ...$members) Remove one or more members from a sorted set. <https://redis.io/commands/zrem>
- * @method mixed zremrangebylex($key, $min, $max) Remove all members in a sorted set between the given lexicographical range. <https://redis.io/commands/zremrangebylex>
- * @method mixed zremrangebyrank($key, $start, $stop) Remove all members in a sorted set within the given indexes. <https://redis.io/commands/zremrangebyrank>
- * @method mixed zremrangebyscore($key, $min, $max) Remove all members in a sorted set within the given scores. <https://redis.io/commands/zremrangebyscore>
- * @method mixed zrevrange($key, $start, $stop, $WITHSCORES = null) Return a range of members in a sorted set, by index, with scores ordered from high to low. <https://redis.io/commands/zrevrange>
- * @method mixed zrevrangebyscore($key, $max, $min, $WITHSCORES = null, $LIMIT = null, $offset = null, $count = null) Return a range of members in a sorted set, by score, with scores ordered from high to low. <https://redis.io/commands/zrevrangebyscore>
- * @method mixed zrevrank($key, $member) Determine the index of a member in a sorted set, with scores ordered from high to low. <https://redis.io/commands/zrevrank>
- * @method mixed zscore($key, $member) Get the score associated with the given member in a sorted set. <https://redis.io/commands/zscore>
- * @method mixed zunionstore($destination, $numkeys, $key, ...$options) Add multiple sorted sets and store the resulting sorted set in a new key. <https://redis.io/commands/zunionstore>
- * @method mixed scan($cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate the keys space. <https://redis.io/commands/scan>
- * @method mixed sscan($key, $cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate Set elements. <https://redis.io/commands/sscan>
- * @method mixed hscan($key, $cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate hash fields and associated values. <https://redis.io/commands/hscan>
- * @method mixed zscan($key, $cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate sorted sets elements and associated scores. <https://redis.io/commands/zscan>
- *
- * @property string $driverName Name of the DB driver. This property is read-only.
- * @property bool $isActive Whether the DB connection is established. This property is read-only.
- * @property LuaScriptBuilder $luaScriptBuilder This property is read-only.
- *
- * @author Carsten Brandt <mail@cebe.cc>
- * @since 2.0
- */
-class Connection extends Component implements ConnectionInterface
+use function array_keys;
+use function array_merge;
+use function count;
+use function explode;
+use function fclose;
+use function fgets;
+use function fread;
+use function fwrite;
+use function get_class;
+use function get_object_vars;
+use function implode;
+use function in_array;
+use function ini_get;
+use function mb_strlen;
+use function mb_substr;
+use function preg_split;
+use function stream_set_timeout;
+use function stream_socket_enable_crypto;
+use function strtoupper;
+use function usleep;
+use function version_compare;
+
+final class Connection implements ConnectionInterface
 {
-    /**
-     * @event Event an event that is triggered after a DB connection is established
-     */
-    public const EVENT_AFTER_OPEN = 'after.open';
-
-    /**
-     * @var string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
-     * If [[unixSocket]] is specified, hostname and [[port]] will be ignored.
-     */
-    public $hostname = 'localhost';
-    /**
-     * @var integer the port to use for connecting to the redis server. Default port is 6379.
-     * If [[unixSocket]] is specified, [[hostname]] and port will be ignored.
-     */
-    public $port = 6379;
-    /**
-     * @var string the unix socket path (e.g. `/var/run/redis/redis.sock`) to use for connecting to the redis server.
-     * This can be used instead of [[hostname]] and [[port]] to connect to the server using a unix socket.
-     * If a unix socket path is specified, [[hostname]] and [[port]] will be ignored.
-     * @since 2.0.1
-     */
-    public $unixSocket;
-    /**
-     * @var string the password for establishing DB connection. Defaults to null meaning no AUTH command is sent.
-     * See http://redis.io/commands/auth
-     */
-    public $password;
-    /**
-     * @var integer the redis database to use. This is an integer value starting from 0. Defaults to 0.
-     * Since version 2.0.6 you can disable the SELECT command sent after connection by setting this property to `null`.
-     */
-    public $database = 0;
-    /**
-     * @var float timeout to use for connection to redis. If not set the timeout set in php.ini will be used: `ini_get("default_socket_timeout")`.
-     */
-    public $connectionTimeout = null;
-    /**
-     * @var float timeout to use for redis socket when reading and writing data. If not set the php default value will be used.
-     */
-    public $dataTimeout = null;
-    /**
-     * @var integer Bitmask field which may be set to any combination of connection flags passed to [stream_socket_client()](http://php.net/manual/en/function.stream-socket-client.php).
-     * Currently the select of connection flags is limited to `STREAM_CLIENT_CONNECT` (default), `STREAM_CLIENT_ASYNC_CONNECT` and `STREAM_CLIENT_PERSISTENT`.
-     *
-     * > Warning: `STREAM_CLIENT_PERSISTENT` will make PHP reuse connections to the same server. If you are using multiple
-     * > connection objects to refer to different redis [[$database|databases]] on the same [[port]], redis commands may
-     * > get executed on the wrong database. `STREAM_CLIENT_PERSISTENT` is only safe to use if you use only one database.
-     * >
-     * > You may still use persistent connections in this case when disambiguating ports as described
-     * > in [a comment on the PHP manual](http://php.net/manual/en/function.stream-socket-client.php#105393)
-     * > e.g. on the connection used for session storage, specify the port as:
-     * >
-     * > ```php
-     * > 'port' => '6379/session'
-     * > ```
-     *
-     * @see http://php.net/manual/en/function.stream-socket-client.php
-     * @since 2.0.5
-     */
-    public $socketClientFlags = STREAM_CLIENT_CONNECT;
-    /**
-     * @var integer The number of times a command execution should be retried when a connection failure occurs.
-     * This is used in [[executeCommand()]] when a [[SocketException]] is thrown.
-     * Defaults to 0 meaning no retries on failure.
-     * @since 2.0.7
-     */
-    public $retries = 0;
-    /**
-     * @var array List of available redis commands.
-     * @see http://redis.io/commands
-     */
-    public $redisCommands = [
+    private string $hostname = 'localhost';
+    private string $redirectConnectionString = '';
+    private int $port = 6379;
+    private string $unixSocket = '';
+    private ?string $password = null;
+    private ?int $database = null;
+    private ?float $connectionTimeout = null;
+    private ?float $dataTimeout = null;
+    private bool $useSSL = false;
+    private int $socketClientFlags = STREAM_CLIENT_CONNECT;
+    private int $retries = 0;
+    private int $retryInterval = 0;
+    private array $redisCommands = [
         'APPEND', // Append a value to a key
         'AUTH', // Authenticate to the server
         'BGREWRITEAOF', // Asynchronously rewrite the append-only file
@@ -480,6 +229,19 @@ class Connection extends Component implements ConnectionInterface
         'UNWATCH', // Forget about all watched keys
         'WAIT', // Wait for the synchronous replication of all the write commands sent in the context of the current connection
         'WATCH', // Watch the given keys to determine execution of the MULTI/EXEC block
+        'XACK', // Removes one or multiple messages from the pending entries list (PEL) of a stream consumer group
+        'XADD', // Appends the specified stream entry to the stream at the specified key
+        'XCLAIM', // Changes the ownership of a pending message, so that the new owner is the consumer specified as the command argument
+        'XDEL', // Removes the specified entries from a stream, and returns the number of entries deleted
+        'XGROUP', // Manages the consumer groups associated with a stream data structure
+        'XINFO', // Retrieves different information about the streams and associated consumer groups
+        'XLEN', // Returns the number of entries inside a stream
+        'XPENDING', // Fetching data from a stream via a consumer group, and not acknowledging such data, has the effect of creating pending entries
+        'XRANGE', // Returns the stream entries matching a given range of IDs
+        'XREAD', // Read data from one or multiple streams, only returning entries with an ID greater than the last received ID reported by the caller
+        'XREADGROUP', // Special version of the XREAD command with support for consumer groups
+        'XREVRANGE', // Exactly like XRANGE, but with the notable difference of returning the entries in reverse order, and also taking the start-end range in reverse order
+        'XTRIM', // Trims the stream to a given number of items, evicting older items (items with lower IDs) if needed
         'ZADD', // Add one or more members to a sorted set, or update its score if it already exists
         'ZCARD', // Get the number of members in a sorted set
         'ZCOUNT', // Count the members in a sorted set with scores within the given values
@@ -505,113 +267,162 @@ class Connection extends Component implements ConnectionInterface
         'HSCAN', // Incrementally iterate hash fields and associated values
         'ZSCAN', // Incrementally iterate sorted sets elements and associated scores
     ];
+    private array $pool = [];
+    private bool $runEvent = false;
+    private EventDispatcherInterface $dispatch;
+    private LoggerInterface $logger;
+    private string $dsn;
 
-    /**
-     * @var resource redis socket connection
-     */
-    private $_socket = false;
-
+    public function __construct(EventDispatcherInterface $dispatch, LoggerInterface $logger)
+    {
+        $this->dispatch = $dispatch;
+        $this->logger = $logger;
+    }
 
     /**
      * Closes the connection when this component is being serialized.
+     *
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
+        unset($this->dispatch);
+
         $this->close();
+
         return array_keys(get_object_vars($this));
     }
 
     /**
+     * Return the connection string used to open a socket connection. During a redirect (cluster mode) this will be the
+     * target of the redirect.
+     *
+     * @return string socket connection string
+     */
+    public function getConnectionString(): string
+    {
+        if ($this->unixSocket) {
+            return 'unix://' . $this->unixSocket;
+        }
+
+        return 'tcp://' . ($this->redirectConnectionString ?: "$this->hostname:$this->port");
+    }
+
+    /**
+     * Return the connection resource if a connection to the target has been established before, `false` otherwise.
+     *
+     * @return resource|false
+     */
+    public function getSocket()
+    {
+        return ArrayHelper::getValue($this->pool, $this->getConnectionString(), false);
+    }
+
+    /**
      * Returns a value indicating whether the DB connection is established.
+     *
      * @return bool whether the DB connection is established
      */
-    public function getIsActive()
+    public function getIsActive(): bool
     {
-        return $this->_socket !== false;
+        return ArrayHelper::getValue($this->pool, "$this->hostname:$this->port", false) !== false;
     }
 
     /**
      * Establishes a DB connection.
+     *
      * It does nothing if a DB connection has already been established.
+     *
      * @throws Exception if connection fails
      */
-    public function open()
+    public function open(): void
     {
-        if ($this->_socket !== false) {
+        if ($this->getSocket() !== false) {
             return;
         }
-        $connection = ($this->unixSocket ?: $this->hostname . ':' . $this->port) . ', database=' . $this->database;
-        Yii::debug('Opening redis DB connection: ' . $connection, __METHOD__);
-        $this->_socket = @stream_socket_client(
-            $this->unixSocket ? 'unix://' . $this->unixSocket : 'tcp://' . $this->hostname . ':' . $this->port,
+
+        $this->dsn = $this->getConnectionString() . ', database=' . $this->database;
+
+        $this->logger->log(LogLevel::INFO, 'Opening redis DB connection: ' . $this->dsn . ' ' . __METHOD__);
+
+        $socket = @stream_socket_client(
+            $this->getConnectionString(),
             $errorNumber,
             $errorDescription,
-            $this->connectionTimeout ? $this->connectionTimeout : ini_get('default_socket_timeout'),
+            $this->connectionTimeout ?? (float) ini_get('default_socket_timeout'),
             $this->socketClientFlags
         );
-        if ($this->_socket) {
+
+        if ($socket) {
+            $this->pool[ $this->getConnectionString() ] = $socket;
+
             if ($this->dataTimeout !== null) {
-                stream_set_timeout($this->_socket, $timeout = (int) $this->dataTimeout, (int) (($this->dataTimeout - $timeout) * 1000000));
+                stream_set_timeout(
+                    $socket,
+                    $timeout = (int) $this->dataTimeout,
+                    (int) (($this->dataTimeout - $timeout) * 1000000)
+                );
             }
+
+            if ($this->useSSL) {
+                stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+            }
+
             if ($this->password !== null) {
                 $this->executeCommand('AUTH', [$this->password]);
             }
+
             if ($this->database !== null) {
                 $this->executeCommand('SELECT', [$this->database]);
             }
-            $this->initConnection();
+
+            if ($this->runEvent) {
+                $this->dispatch->dispatch(new AfterOpen());
+            }
         } else {
-            Yii::error("Failed to open redis DB connection ($connection): $errorNumber - $errorDescription", __CLASS__);
-            $message = YII_DEBUG ? "Failed to open redis DB connection ($connection): $errorNumber - $errorDescription" : 'Failed to open DB connection.';
+            $message = "Failed to open redis DB connection ($this->dsn): $errorNumber - $errorDescription " . __CLASS__;
+
+            $this->logger->log(
+                LogLevel::ERROR,
+                $message
+            );
+
             throw new Exception($message, $errorDescription, $errorNumber);
         }
     }
 
     /**
      * Closes the currently active DB connection.
+     *
      * It does nothing if the connection is already closed.
      */
-    public function close()
+    public function close(): void
     {
-        if ($this->_socket !== false) {
-            $connection = ($this->unixSocket ?: $this->hostname . ':' . $this->port) . ', database=' . $this->database;
-            Yii::debug('Closing DB connection: ' . $connection, __METHOD__);
+        foreach ($this->pool as $socket) {
+            $this->dsn = $this->getConnectionString() . ', database=' . $this->database;
+
+            $this->logger->log(LogLevel::INFO, 'Closing DB connection: ' . $this->dsn . ' ' . __METHOD__);
+
             try {
                 $this->executeCommand('QUIT');
             } catch (SocketException $e) {
-                // ignore errors when quitting a closed connection
+                /** ignore errors when quitting a closed connection. */
             }
-            fclose($this->_socket);
-            $this->_socket = false;
+
+            fclose($socket);
         }
+
+        $this->pool = [];
     }
 
     /**
-     * Initializes the DB connection.
-     * This method is invoked right after the DB connection is established.
-     * The default implementation triggers an [[EVENT_AFTER_OPEN]] event.
+     * Returns the name of the DB driver.
+     *
+     * @return string name of the DB driver.
      */
-    protected function initConnection()
-    {
-        $this->trigger(self::EVENT_AFTER_OPEN);
-    }
-
-    /**
-     * Returns the name of the DB driver for the current [[dsn]].
-     * @return string name of the DB driver
-     */
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return 'redis';
-    }
-
-    /**
-     * @return LuaScriptBuilder
-     */
-    public function getLuaScriptBuilder()
-    {
-        return new LuaScriptBuilder();
     }
 
     /**
@@ -621,23 +432,26 @@ class Connection extends Component implements ConnectionInterface
      * $redis->hmset('test_collection', 'key1', 'val1', 'key2', 'val2')
      * ```
      *
-     * @param string $name name of the missing method to execute
-     * @param array $params method call arguments
+     * @param string $name name of the missing method to execute.
+     * @param array $params method call arguments.
+     *
+     * @throws Exception
+     *
      * @return mixed
      */
-    public function __call($name, $params)
+    public function __call(string $name, array $params)
     {
-        $redisCommand = strtoupper(Inflector::camel2words($name, false));
-        if (in_array($redisCommand, $this->redisCommands)) {
+        $redisCommand = strtoupper((new Inflector())->toWords($name, false));
+
+        if (in_array($redisCommand, $this->redisCommands, true)) {
             return $this->executeCommand($redisCommand, $params);
         }
-
-        return parent::__call($name, $params);
     }
 
     /**
      * Executes a redis command.
-     * For a list of available commands and their parameters see http://redis.io/commands.
+     *
+     * For a list of available commands and their parameters see https://redis.io/commands.
      *
      * The params array should contain the params separated by white space, e.g. to execute
      * `SET mykey somevalue NX` call the following:
@@ -646,21 +460,23 @@ class Connection extends Component implements ConnectionInterface
      * $redis->executeCommand('SET', ['mykey', 'somevalue', 'NX']);
      * ```
      *
-     * @param string $name the name of the command
-     * @param array $params list of parameters for the command
-     * @return array|bool|null|string Dependent on the executed command this method
-     * will return different data types:
+     * @param string $name the name of the command.
+     * @param array $params list of parameters for the command.
+     *
+     * @throws Exception for commands that return [error reply](https://redis.io/topics/protocol#error-reply).
+     *
+     * @return array|bool|null|string Dependent on the executed command this method will return different data types:
      *
      * - `true` for commands that return "status reply" with the message `'OK'` or `'PONG'`.
-     * - `string` for commands that return "status reply" that does not have the message `OK` (since version 2.0.1).
+     * - `string` for commands that return "status reply" that does not have the message `OK`.
      * - `string` for commands that return "integer reply"
      *   as the value is in the range of a signed 64 bit integer.
      * - `string` or `null` for commands that return "bulk reply".
      * - `array` for commands that return "Multi-bulk replies".
      *
-     * See [redis protocol description](http://redis.io/topics/protocol)
+     * See [redis protocol description](https://redis.io/topics/protocol)
+     *
      * for details on the mentioned reply types.
-     * @throws Exception for commands that return [error reply](http://redis.io/topics/protocol#error-reply).
      */
     public function executeCommand($name, $params = [])
     {
@@ -668,80 +484,105 @@ class Connection extends Component implements ConnectionInterface
 
         $params = array_merge(explode(' ', $name), $params);
         $command = '*' . count($params) . "\r\n";
+
         foreach ($params as $arg) {
-            $command .= '$' . mb_strlen($arg, '8bit') . "\r\n" . $arg . "\r\n";
+            $command .= '$' . mb_strlen((string) $arg, '8bit') . "\r\n" . $arg . "\r\n";
         }
 
-        Yii::debug("Executing Redis Command: {$name}", __METHOD__);
+        $this->logger->log(LogLevel::INFO, "Executing Redis Command: {$name} " . ' ' . __METHOD__);
+
         if ($this->retries > 0) {
             $tries = $this->retries;
             while ($tries-- > 0) {
                 try {
                     return $this->sendCommandInternal($command, $params);
                 } catch (SocketException $e) {
-                    Yii::error($e, __METHOD__);
-                    // backup retries, fail on commands that fail inside here
+                    $this->logger->log(LogLevel::ERROR, $e . ' ' . __METHOD__);
+
+                    /** backup retries, fail on commands that fail inside here. */
                     $retries = $this->retries;
+
                     $this->retries = 0;
+
                     $this->close();
+
+                    if ($this->retryInterval > 0) {
+                        usleep($this->retryInterval);
+                    }
+
                     $this->open();
+
                     $this->retries = $retries;
                 }
             }
         }
+
         return $this->sendCommandInternal($command, $params);
     }
 
     /**
      * Sends RAW command string to the server.
+     *
+     * @param string $command
+     * @param array $params
+     *
+     * @throws Exception
      * @throws SocketException on connection error.
+     *
+     * @return array|bool|false|mixed|string|null
      */
-    private function sendCommandInternal($command, $params)
+    private function sendCommandInternal(string $command, array $params = [])
     {
-        $written = @fwrite($this->_socket, $command);
+        $written = @fwrite($this->getSocket(), $command);
+
         if ($written === false) {
             throw new SocketException("Failed to write to socket.\nRedis command was: " . $command);
         }
         if ($written !== ($len = mb_strlen($command, '8bit'))) {
             throw new SocketException("Failed to write to socket. $written of $len bytes written.\nRedis command was: " . $command);
         }
-        return $this->parseResponse(implode(' ', $params));
+
+        return $this->parseResponse($params, $command);
     }
 
-    /**
-     * @param string $command
-     * @return mixed
-     * @throws Exception on error
-     */
-    private function parseResponse($command)
+    private function parseResponse(array $params, ?string $command = null)
     {
-        if (($line = fgets($this->_socket)) === false) {
-            throw new SocketException("Failed to read from socket.\nRedis command was: " . $command);
+        $prettyCommand = implode(' ', $params);
+
+        if (($line = fgets($this->getSocket())) === false) {
+            throw new SocketException("Failed to read from socket.\nRedis command was: " . $prettyCommand);
         }
+
         $type = $line[0];
         $line = mb_substr($line, 1, -2, '8bit');
+
         switch ($type) {
             case '+': // Status reply
                 if ($line === 'OK' || $line === 'PONG') {
                     return true;
-                } else {
-                    return $line;
                 }
-                // no break
+
+                return $line;
             case '-': // Error reply
-                throw new Exception("Redis error: " . $line . "\nRedis command was: " . $command);
+                if ($this->isRedirect($line)) {
+                    return $this->redirect($line, $command, $params);
+                }
+
+                throw new Exception("Redis error: " . $line . "\nRedis command was: " . $prettyCommand);
             case ':': // Integer reply
                 // no cast to int as it is in the range of a signed 64 bit integer
                 return $line;
             case '$': // Bulk replies
-                if ($line == '-1') {
+                if ($line === '-1') {
                     return null;
                 }
+
                 $length = (int)$line + 2;
                 $data = '';
+
                 while ($length > 0) {
-                    if (($block = fread($this->_socket, $length)) === false) {
-                        throw new SocketException("Failed to read from socket.\nRedis command was: " . $command);
+                    if (($block = fread($this->getSocket(), $length)) === false) {
+                        throw new SocketException("Failed to read from socket.\nRedis command was: " . $prettyCommand);
                     }
                     $data .= $block;
                     $length -= mb_strlen($block, '8bit');
@@ -752,12 +593,353 @@ class Connection extends Component implements ConnectionInterface
                 $count = (int) $line;
                 $data = [];
                 for ($i = 0; $i < $count; $i++) {
-                    $data[] = $this->parseResponse($command);
+                    $data[] = $this->parseResponse($params);
                 }
 
                 return $data;
             default:
-                throw new Exception('Received illegal data from redis: ' . $line . "\nRedis command was: " . $command);
+                throw new Exception(
+                    'Received illegal data from redis: ' . $line . "\nRedis command was: " . $prettyCommand
+                );
         }
+    }
+
+    private function isRedirect(string $line): bool
+    {
+        return is_string($line) && mb_strpos($line, 'MOVED') === 0;
+    }
+
+    private function redirect(string $redirect, string $command, array $params = [])
+    {
+        $responseParts = preg_split('/\s+/', $redirect);
+
+        $this->redirectConnectionString = ArrayHelper::getValue($responseParts, 2);
+
+        if ($this->redirectConnectionString) {
+            $this->logger->log(LogLevel::INFO, 'Redirecting to ' . $this->getConnectionString(), __METHOD__);
+
+            $this->open();
+
+            $response = $this->sendCommandInternal($command, $params);
+
+            $this->redirectConnectionString = '';
+
+            return $response;
+        }
+
+        throw new Exception('No hostname found in redis redirect (MOVED): ' . VarDumper::dumpAsString($redirect));
+    }
+
+    /**
+     * @return float timeout to use for connection to redis. If not set the timeout set in php.ini will be used:
+     * `ini_get("default_socket_timeout")`.
+     */
+    public function getConnectionTimeout(): ?float
+    {
+        return $this->connectionTimeout;
+    }
+
+    /**
+     * @return int the redis database to use. This is an integer value starting from 0. Defaults to 0.
+     *
+     * You can disable the SELECT command sent after connection by setting this property to `null`.
+     */
+    public function getDatabase(): ?int
+    {
+        return $this->database;
+    }
+
+    /**
+     * @return float timeout to use for redis socket when reading and writing data. If not set the php default value
+     * will be used.
+     */
+    public function getDataTimeout(): ?float
+    {
+        return $this->dataTimeout;
+    }
+
+    /**
+     * @return string the hostname or ip address to use for connecting to the redis server. Defaults to 'localhost'.
+     *
+     * If {@see unixSocket} is specified, hostname and {@see port} will be ignored.
+     */
+    public function getHostname(): string
+    {
+        return $this->hostname;
+    }
+
+    /**
+     * @return string the password for establishing DB connection. Defaults to null meaning no AUTH command is sent.
+     *
+     * {@see https://redis.io/commands/auth}
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return array redis redirect socket connection pool.
+     */
+    public function getPool(): array
+    {
+        return $this->pool;
+    }
+
+    /**
+     * @return int the port to use for connecting to the redis server. Default port is 6379.
+     *
+     * If {@see unixSocket} is specified, {@see hostname} and port will be ignored.
+     */
+    public function getPort(): int
+    {
+        return $this->port;
+    }
+
+    /**
+     * @return string if the query gets redirected, use this as the temporary new hostname.
+     */
+    public function getRedirectConnectionString(): string
+    {
+        return $this->redirectConnectionString;
+    }
+
+    /**
+     * @return array List of available redis commands.
+     *
+     * {@see https://redis.io/commands}
+     */
+    public function getRedisCommands(): array
+    {
+        return $this->redisCommands;
+    }
+
+    /**
+     * @return int The number of times a command execution should be retried when a connection failure occurs.
+     *
+     * This is used in {@see executeCommand()} when a {@see SocketException} is thrown.
+     *
+     * Defaults to 0 meaning no retries on failure.
+     */
+    public function getRetries(): int
+    {
+        return $this->retries;
+    }
+
+    /**
+     * @return int The retry interval in microseconds to wait between retry.
+     *
+     * This is used in {@see executeCommand()} when a {@see SocketException} is thrown.
+     *
+     * Defaults to 0 meaning no wait.
+     */
+    public function getRetryInterval(): int
+    {
+        return $this->retryInterval;
+    }
+
+    public function getRunEvent(): bool
+    {
+        return $this->runEvent;
+    }
+
+    /**
+     * @return integer Bitmask field which may be set to any combination of connection flags passed to
+     * [stream_socket_client()](https://www.php.net/manual/en/function.stream-socket-client.php).
+     *
+     * Currently the select of connection flags is limited to `STREAM_CLIENT_CONNECT` (default),
+     * `STREAM_CLIENT_ASYNC_CONNECT` and `STREAM_CLIENT_PERSISTENT`.
+     *
+     * > Warning: `STREAM_CLIENT_PERSISTENT` will make PHP reuse connections to the same server. If you are using
+     * > multiple connection objects to refer to different redis {@see $database|databases} on the same {@see port},
+     * > redis commands may get executed on the wrong database. `STREAM_CLIENT_PERSISTENT` is only safe to use if you
+     * > use only one database.
+     * >
+     * > You may still use persistent connections in this case when disambiguating ports as described
+     * > in [a comment on the PHP manual](https://www.php.net/manual/en/function.stream-socket-client.php#105393)
+     * > e.g. on the connection used for session storage, specify the port as:
+     * >
+     * > ```php
+     * > 'port' => '6379/session'
+     * > ```
+     *
+     * {@see https://www.php.net/manual/en/function.stream-socket-client.php}
+     */
+    public function getSocketClientFlags(): int
+    {
+        return $this->socketClientFlags;
+    }
+
+    /**
+     * @return string the unix socket path (e.g. `/var/run/redis/redis.sock`) to use for connecting to the redis server.
+     * This can be used instead of {@see hostname} and {@see port} to connect to the server using a unix socket. If a
+     * unix socket path is specified, {@see hostname} and {@see port} will be ignored.
+     */
+    public function getUnixSocket(): string
+    {
+        return $this->unixSocket;
+    }
+
+    /**
+     * @return bool Send sockets over SSL protocol. Default state is false.
+     */
+    public function getUseSSL(): bool
+    {
+        return $this->useSSL;
+    }
+
+    public function connectionTimeout(float $value): void
+    {
+        $this->connectionTimeout = $value;
+    }
+
+    public function database(int $value): void
+    {
+        $this->database = $value;
+    }
+
+    public function dataTimeout(float $value): void
+    {
+        $this->dataTimeout = $value;
+    }
+
+    public function hostname(string $value): void
+    {
+        $this->hostname = $value;
+    }
+
+    public function password(?string $value): void
+    {
+        $this->password = $value;
+    }
+
+    public function port(int $value): void
+    {
+        $this->port = $value;
+    }
+
+    public function pool(array $value): void
+    {
+        $this->pool = $value;
+    }
+
+    public function redirectConnectionString(string $value): void
+    {
+        $this->redirectConnectionString = $value;
+    }
+
+    public function redisCommands(array $value): void
+    {
+        $this->redisCommands = $value;
+    }
+
+    public function retries(int $value): void
+    {
+        $this->retries = $value;
+    }
+
+    public function retryInterval(int $value): void
+    {
+        $this->retryInterval = $value;
+    }
+
+    public function runEvent(bool $value): void
+    {
+        $this->runEvent = $value;
+    }
+
+    public function socketClientFlags(int $value): void
+    {
+        $this->socketClientFlags = $value;
+    }
+
+    public function unixSocket(string $value): void
+    {
+        $this->unixSocket = $value;
+    }
+
+    public function useSSL(bool $useSSL): void
+    {
+        $this->useSSL = $useSSL;
+    }
+
+    /**
+     * Creates a command for execution.
+     *
+     * @param string|null $sql the SQL statement to be executed
+     * @param array $params the parameters to be bound to the SQL statement
+     *
+     * @throws NotSupportedException
+     *
+     * @return Command the DB command
+     */
+    public function createCommand(?string $sql = null, array $params = []): Command
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support Command::class.');
+    }
+
+    /**
+     * @return string the Data Source Name, or DSN, contains the information required to connect to the database.
+     *
+     * Please refer to the [PHP manual](https://secure.php.net/manual/en/pdo.construct.php) on the format of the DSN
+     * string.
+     */
+    public function getDsn(): string
+    {
+        return $this->dsn;
+    }
+
+    /**
+     * Returns the schema information for the database opened by this connection.
+     *
+     * @throws NotSupportedException
+     *
+     * @return Schema the schema information for the database opened by this connection.
+     */
+    public function getSchema(): Schema
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support Schema::class.');
+    }
+
+    /**
+     * Returns a server version as a string comparable by {@see version_compare()}.
+     *
+     * @throws Exception
+     *
+     * @return string server version as a string.
+     */
+    public function getServerVersion(): string
+    {
+        $version = (explode("\r\n", $this->executeCommand('INFO', ['server'])));
+
+        return $version[1];
+    }
+
+    /**
+     * Obtains the schema information for the named table.
+     *
+     * @param string $name table name.
+     * @param bool $refresh whether to reload the table schema even if it is found in the cache.
+     *
+     * @throws NotSupportedException
+     *
+     * @return TableSchema|null
+     */
+    public function getTableSchema($name, $refresh = false): ?TableSchema
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support TableShema::class.');
+    }
+
+    /**
+     * Whether to enable read/write splitting by using {@see setSlaves()} to read data. Note that if {@see setSlaves()}
+     * is empty, read/write splitting will NOT be enabled no matter what value this property takes.
+     *
+     * @param bool $value
+     *
+     * @throws NotSupportedException
+     */
+    public function setEnableSlaves(bool $value): void
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support SetEnableSlaves() method.');
     }
 }
