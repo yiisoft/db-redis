@@ -861,7 +861,6 @@ final class Connection implements ConnectionInterface
     public function useSSL(bool $useSSL): void
     {
         $this->useSSL = $useSSL;
-
     }
 
     /**
