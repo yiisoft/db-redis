@@ -424,14 +424,6 @@ final class Connection implements ConnectionInterface
     }
 
     /**
-     * @return LuaScriptBuilder
-     */
-    public function getLuaScriptBuilder(): LuaScriptBuilder
-    {
-        return new LuaScriptBuilder();
-    }
-
-    /**
      * Allows issuing all supported commands via magic methods.
      *
      * ```php
