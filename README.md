@@ -1,6 +1,6 @@
 <p align="center">
     <a href="http://redis.io/" target="_blank" rel="external">
-        <img src="https://redis.io/images/redis-white.png" height="100px">
+        <img src="https://download.redis.io/redis.png" height="100px">
     </a>
     <h1 align="center">Yii DataBase Redis Extension</h1>
     <br>
