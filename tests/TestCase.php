@@ -316,7 +316,10 @@ class TestCase extends AbstractTestCase
                     $container->get(LoggerInterface::class)
                 );
 
-                $connection->database($params['yiisoft/db-redis']['database']);
+                $connection->hostname($params['yiisoft/db-redis']['dsn']['host']);
+                $connection->port($params['yiisoft/db-redis']['dsn']['port']);
+                $connection->database($params['yiisoft/db-redis']['dsn']['database']);
+                $connection->password($params['yiisoft/db-redis']['password']);
 
                 ConnectionPool::setConnectionsPool('redis', $connection);
 
@@ -343,8 +346,14 @@ class TestCase extends AbstractTestCase
     {
         return [
             'yiisoft/db-redis' => [
-                'database' => 0,
-            ],
+                'dsn' => [
+                    'driver' => 'redis',
+                    'host' => '127.0.0.1',
+                    'database' => 0,
+                    'port' => 6379
+                ],
+                'password' => null,
+            ]
         ];
     }
 

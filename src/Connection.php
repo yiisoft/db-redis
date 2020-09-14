@@ -763,7 +763,7 @@ final class Connection implements ConnectionInterface
      *
      * {@see https://www.php.net/manual/en/function.stream-socket-client.php}
      */
-    public function getSocketClientFlags(): integer
+    public function getSocketClientFlags(): int
     {
         return $this->socketClientFlags;
     }
@@ -806,7 +806,7 @@ final class Connection implements ConnectionInterface
         $this->hostname = $value;
     }
 
-    public function password(string $value): void
+    public function password(?string $value): void
     {
         $this->password = $value;
     }

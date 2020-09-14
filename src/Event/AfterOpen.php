@@ -8,6 +8,6 @@ final class AfterOpen
 {
     public function getSleep(): void
     {
-        sleep(2);
+        sleep(4);
     }
 }
