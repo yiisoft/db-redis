@@ -80,7 +80,7 @@ The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 ./vendor/bin/phpunit
 ```
 
-Note: You must have MSSQL installed to run the tests, it supports all MSSQL versions.
+Note: You must have REDIS installed to run the tests, it supports versions 4-6.
 
 ## Mutation testing
 
