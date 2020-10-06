@@ -49,7 +49,7 @@ return [
             Reference::to(LoggerInterface::class),
         ],
         'hostname()' => [$params['yiisoft/db-redis']['dsn']['host']],
-        'port()' => [$params['yiisoft/db-redis']['dsn']['port'])],
+        'port()' => [$params['yiisoft/db-redis']['dsn']['port']],
         'database()' => [$params['yiisoft/db-redis']['database']],
         'password()' => [$params['yiisoft/db-redis']['password']],
     ]
