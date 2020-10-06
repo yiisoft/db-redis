@@ -19,7 +19,10 @@
         "ext-json": "*",
         "yiisoft/arrays": "^3.0@dev",
         "yiisoft/db": "^3.0@dev",
-        "yiisoft/strings": "^1.0"
+        "yiisoft/log": "^3.0@dev",
+        "yiisoft/log-target-file": "^3.0@dev",
+        "yiisoft/strings": "^1.0",
+        "yiisoft/yii-event": "^3.0@dev"
     },
     "require-dev": {
         "infection/infection": "^0.17.0",
@@ -27,10 +30,7 @@
         "vimeo/psalm": "^3.15",
         "yiisoft/aliases": "^1.0",
         "yiisoft/cache": "^3.0@dev",
-        "yiisoft/di": "^3.0@dev",
-        "yiisoft/log": "^3.0@dev",
-        "yiisoft/yii-console": "^3.0@dev",
-        "yiisoft/yii-event": "^3.0@dev"
+        "yiisoft/di": "^3.0@dev"
     },
     "autoload": {
         "psr-4": { "Yiisoft\\Db\\Redis\\": "src" }
@@ -44,11 +44,5 @@
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         }
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ]
+    }
 }

@@ -16,7 +16,7 @@ This extension provides the [redis](http://redis.io/) connection support for the
 
 ## Support version
 
-|  PHP | Mssql Version            |  CI-Actions
+|  PHP | Redis Version            |  CI-Actions
 |:----:|:------------------------:|:---:|
 |**7.4 - 8.0**| **4 - 6**|[![Build status](https://github.com/yiisoft/db-redis/workflows/build/badge.svg)](https://github.com/yiisoft/db-redis/actions?query=workflow%3Abuild) [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fdb-redis%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/db-redis/master) [![static analysis](https://github.com/yiisoft/db-redis/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/db-redis/actions?query=workflow%3A%22static+analysis%22) [![type-coverage](https://shepherd.dev/github/yiisoft/db-redis/coverage.svg)](https://shepherd.dev/github/yiisoft/db-redis)
 
@@ -31,74 +31,28 @@ composer require yiisoft/db-redis
 
 ## Configuration
 
+Using `yiisoft/composer-config-plugin` automatically get the settings of `EventDispatcherInterface::class` and `LoggerInterface::class`.
+
 Di-Container:
 
 ```php
-use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
-use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Connection\ConnectionPool;
-use Yiisoft\Db\Redis\Connection;
-use Yiisoft\Log\Logger;
-use Yiisoft\Log\Target\File\FileRotator;
-use Yiisoft\Log\Target\File\FileRotatorInterface;
-use Yiisoft\Log\Target\File\FileTarget;
-
+use Yiisoft\Db\Redis\Connection as RedisConnection;
+use Yiisoft\Factory\Definitions\Reference;
 
 return [
-    ContainerInterface::class => static function (ContainerInterface $container) {
-        return $container;
-    },
-
-    Aliases::class => [
-        '@root' => dirname(__DIR__, 1), // directory - packages.
-        '@runtime' => '@root/runtime'
-    ],
-
-    FileRotatorInterface::class => static function () {
-        return new FileRotator(10);
-    },
-
-    LoggerInterface::class => static function (ContainerInterface $container) {
-        $aliases = $container->get(Aliases::class);
-        $fileRotator = $container->get(FileRotatorInterface::class);
-
-        $fileTarget = new FileTarget(
-            $aliases->get('@runtime/logs/app.log'),
-            $fileRotator
-        );
-
-        $fileTarget->setLevels(
-            [
-                LogLevel::EMERGENCY,
-                LogLevel::ERROR,
-                LogLevel::WARNING,
-                LogLevel::INFO,
-                LogLevel::DEBUG
-            ]
-        );
-
-        return new Logger(['file' => $fileTarget]);
-    },
-
-    ConnectionInterface::class  => static function (ContainerInterface $container) use ($params) {
-        $connection = new Connection(
-            /** EventDispatcherInterface::class is register in yii-events providers */
-            $container->get(EventDispatcherInterface::class),
-            $container->get(LoggerInterface::class)
-        );
-
-        $connection->hostname($params['yiisoft/db-redis']['dsn']['host']);
-        $connection->port($params['yiisoft/db-redis']['dsn']['port']);
-        $connection->database($params['yiisoft/db-redis']['dsn']['database']);
-        $connection->password($params['yiisoft/db-redis']['password']);
-
-        ConnectionPool::setConnectionsPool('redis', $connection);
-
-        return $connection;
-    }
+    RedisConnection::class => [
+        '__class' => RedisConnection::class,
+        '__construct()' => [
+            Reference::to(EventDispatcherInterface::class),
+            Reference::to(LoggerInterface::class),
+        ],
+        'hostname()' => [$params['yiisoft/db-redis']['dsn']['host']],
+        'port()' => [$params['yiisoft/db-redis']['dsn']['port'])],
+        'database()' => [$params['yiisoft/db-redis']['database']],
+        'password()' => [$params['yiisoft/db-redis']['password']],
+    ]
 ];
 ```
 
@@ -126,7 +80,7 @@ The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 ./vendor/bin/phpunit
 ```
 
-Note: You must have MSSQL installed to run the tests, it supports all MSSQL versions.
+Note: You must have REDIS installed to run the tests, it supports versions 4-6.
 
 ## Mutation testing
 
