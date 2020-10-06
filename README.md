@@ -39,6 +39,7 @@ Di-Container:
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Yiisoft\Db\Redis\Connection as RedisConnection;
+use Yiisoft\Factory\Definitions\Reference;
 
 return [
     RedisConnection::class => [
