@@ -20,7 +20,6 @@
         "yiisoft/arrays": "^3.0@dev",
         "yiisoft/db": "^3.0@dev",
         "yiisoft/log": "^3.0@dev",
-        "yiisoft/log-target-file": "^3.0@dev",
         "yiisoft/strings": "^1.0",
         "yiisoft/yii-event": "^3.0@dev"
     },
