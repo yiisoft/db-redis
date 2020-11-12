@@ -36,22 +36,15 @@ Using `yiisoft/composer-config-plugin` automatically get the settings of `EventD
 Di-Container:
 
 ```php
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface;
 use Yiisoft\Db\Redis\Connection as RedisConnection;
-use Yiisoft\Factory\Definitions\Reference;
 
 return [
     RedisConnection::class => [
         '__class' => RedisConnection::class,
-        '__construct()' => [
-            Reference::to(EventDispatcherInterface::class),
-            Reference::to(LoggerInterface::class),
-        ],
-        'hostname()' => [$params['yiisoft/db-redis']['dsn']['host']],
+        'host()' => [$params['yiisoft/db-redis']['dsn']['host']],
         'port()' => [$params['yiisoft/db-redis']['dsn']['port']],
-        'database()' => [$params['yiisoft/db-redis']['database']],
-        'password()' => [$params['yiisoft/db-redis']['password']],
+        'database()' => [$params['yiisoft/db-redis']['dsn']['database']],
+        'password()' => [$params['yiisoft/db-redis']['password']]
     ]
 ];
 ```
@@ -71,29 +64,45 @@ return [
     ]
 ];
 ```
-
-## Unit testing
+### Unit testing
 
 The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 
-```php
+```shell
 ./vendor/bin/phpunit
 ```
 
-Note: You must have REDIS installed to run the tests, it supports versions 4-6.
-
-## Mutation testing
+### Mutation testing
 
 The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
 
-```php
+```shell
 ./vendor/bin/infection
 ```
 
-## Static analysis
+### Static analysis
 
-The code is statically analyzed with [Psalm](https://psalm.dev/docs/). To run static analysis:
+The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
 
-```php
+```shell
 ./vendor/bin/psalm
 ```
+
+### Support the project
+
+[![Open Collective](https://img.shields.io/badge/Open%20Collective-sponsor-7eadf1?logo=open%20collective&logoColor=7eadf1&labelColor=555555)](https://opencollective.com/yiisoft)
+
+### Follow updates
+
+[![Official website](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](https://www.yiiframework.com/)
+[![Twitter](https://img.shields.io/badge/twitter-follow-1DA1F2?logo=twitter&logoColor=1DA1F2&labelColor=555555?style=flat)](https://twitter.com/yiiframework)
+[![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=flat&logo=telegram)](https://t.me/yii3en)
+[![Facebook](https://img.shields.io/badge/facebook-join-1DA1F2?style=flat&logo=facebook&logoColor=ffffff)](https://www.facebook.com/groups/yiitalk)
+[![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=flat&logo=slack)](https://yiiframework.com/go/slack)
+
+## License
+
+The Yii DBAL Redis connection is free software. It is released under the terms of the BSD License.
+Please see [`LICENSE`](./LICENSE.md) for more information.
+
+Maintained by [Yii Software](https://www.yiiframework.com/).

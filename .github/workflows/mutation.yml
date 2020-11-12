@@ -10,9 +10,6 @@ jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
-    env:
-      extensions: curl, intl
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -24,41 +21,42 @@ jobs:
           - "7.4"
 
     steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
 
       - name: Start Redis v6
         uses: superchargejs/redis-github-action@1.1.0
         with:
           redis-version: 6
 
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
-          extensions: ${{ env.extensions }}
           ini-values: memory_limit=-1
           coverage: "pcov"
-          tools: composer:v2, pecl
+          tools: composer:v2
 
       - name: Determine composer cache directory
-        run: echo "::set-env name=COMPOSER_CACHE_DIR::$(composer config cache-dir)"
+        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
 
       - name: Cache dependencies installed with composer
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v2
         with:
           path: ${{ env.COMPOSER_CACHE_DIR }}
           key: php${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             php${{ matrix.php }}-composer-
 
-      - name: Install dependencies with composer
-        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader
+      - name: Update composer
+        run: composer self-update
 
-      - name: Run test mutation infection with coverage
+      - name: Install dependencies with composer
+        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+
+      - name: Run infection
         run: |
-          mkdir -p build/logs
-          vendor/bin/phpunit --coverage-xml=build/logs/coverage-xml --log-junit=build/logs/junit.xml
-          vendor/bin/infection --threads=2 --coverage=build/logs --show-mutations --no-progress
+          git fetch --depth=1 origin $GITHUB_BASE_REF
+          vendor/bin/roave-infection-static-analysis-plugin -j2 --git-diff-filter=A --git-diff-base=origin/$GITHUB_BASE_REF --logger-github --ignore-msi-with-no-mutations --only-covered
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
