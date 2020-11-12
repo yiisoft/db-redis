@@ -16,7 +16,6 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
-use Yiisoft\Db\Connection\ConnectionPool;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Redis\Connection;
 use Yiisoft\Db\Redis\Event\AfterOpen;
@@ -27,6 +26,7 @@ use Yiisoft\Di\Container;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\ListenerCollection;
 use Yiisoft\EventDispatcher\Provider\Provider;
+use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Log\Logger;
 use Yiisoft\Yii\Event\InvalidEventConfigurationFormatException;
@@ -235,25 +235,20 @@ class TestCase extends AbstractTestCase
         $params = $this->params();
 
         return [
-            ContainerInterface::class => static function (ContainerInterface $container) {
-                return $container;
-            },
-
             Aliases::class => [
                 '@root' => dirname(__DIR__, 1),
                 '@data' =>  '@root/tests/Data',
                 '@runtime' => '@data/runtime',
             ],
 
-            CacheInterface::class => static function () {
-                return new Cache(new ArrayCache());
-            },
+            CacheInterface::class => [
+                '__class' => Cache::class,
+                '__construct()' => [
+                    Reference::to(ArrayCache::class)
+                ]
+            ],
 
             LoggerInterface::class => Logger::class,
-
-            Profiler::class => static function (ContainerInterface $container) {
-                return new Profiler($container->get(LoggerInterface::class));
-            },
 
             EventDispatcherProvider::class => function (ContainerInterface $container) {
                 $listenerCollection = new ListenerCollection();
@@ -310,21 +305,13 @@ class TestCase extends AbstractTestCase
 
             EventDispatcherInterface::class => Dispatcher::class,
 
-            Connection::class  => static function (ContainerInterface $container) use ($params) {
-                $connection = new Connection(
-                    $container->get(EventDispatcherInterface::class),
-                    $container->get(LoggerInterface::class)
-                );
-
-                $connection->hostname($params['yiisoft/db-redis']['dsn']['host']);
-                $connection->port($params['yiisoft/db-redis']['dsn']['port']);
-                $connection->database($params['yiisoft/db-redis']['dsn']['database']);
-                $connection->password($params['yiisoft/db-redis']['password']);
-
-                ConnectionPool::setConnectionsPool('redis', $connection);
-
-                return $connection;
-            }
+            Connection::class => [
+                '__class' => Connection::class,
+                'host()' => [$params['yiisoft/db-redis']['dsn']['host']],
+                'port()' => [$params['yiisoft/db-redis']['dsn']['port']],
+                'database()' => [$params['yiisoft/db-redis']['dsn']['database']],
+                'password()' => [$params['yiisoft/db-redis']['password']]
+            ],
         ];
     }
 
