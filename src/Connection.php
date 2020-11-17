@@ -828,7 +828,7 @@ final class Connection implements ConnectionInterface
         $this->redirectConnectionString = ArrayHelper::getValue($responseParts, 2);
 
         if ($this->redirectConnectionString) {
-            $this->logger->log(LogLevel::INFO, 'Redirecting to ' . $this->getConnectionString(), __METHOD__);
+            $this->logger->log(LogLevel::INFO, 'Redirecting to ' . $this->getConnectionString() . ' ' . __METHOD__);
 
             $this->open();
 
