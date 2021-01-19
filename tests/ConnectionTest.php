@@ -162,7 +162,6 @@ final class ConnectionTest extends TestCase
 
         /** reconnect should happen here */
         $this->assertTrue($db->ping());
-
         $this->assertCount(11, $this->getInaccessibleProperty($this->logger, 'messages'));
     }
 
@@ -200,9 +199,6 @@ final class ConnectionTest extends TestCase
         }
 
         $this->assertTrue($exception, 'SocketException should have been thrown.');
-
-        var_dump($this->getInaccessibleProperty($this->logger, 'messages'));
-        die;
         $this->assertCount(14, $this->getInaccessibleProperty($this->logger, 'messages'));
     }
 
