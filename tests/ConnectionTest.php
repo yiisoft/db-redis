@@ -2,7 +2,6 @@
 
 namespace Yiisoft\Db\Redis\Tests;
 
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Log\Logger;
 use Yiisoft\Db\Redis\Connection;
 use Yiisoft\Db\Redis\SocketException;
@@ -163,15 +162,7 @@ final class ConnectionTest extends TestCase
 
         /** reconnect should happen here */
         $this->assertTrue($db->ping());
-
-        $this->assertCount(
-            11,
-            $this->getInaccessibleProperty($this->logger, 'messages'),
-            'log +1 ping command, and reconnection.'
-            . print_r(array_map(function ($s) {
-                return (string) $s;
-            }, ArrayHelper::getColumn($this->getInaccessibleProperty($this->logger, 'messages'), 0)), true)
-        );
+        $this->assertCount(11, $this->getInaccessibleProperty($this->logger, 'messages'));
     }
 
     /**
@@ -208,14 +199,7 @@ final class ConnectionTest extends TestCase
         }
 
         $this->assertTrue($exception, 'SocketException should have been thrown.');
-
-        $this->assertCount(
-            14,
-            $this->getInaccessibleProperty($this->logger, 'messages'),
-            'log +1 ping command, and reconnection.' . print_r(array_map(function ($s) {
-                return (string) $s;
-            }, ArrayHelper::getColumn($this->getInaccessibleProperty($this->logger, 'messages'), 0)), true)
-        );
+        $this->assertCount(14, $this->getInaccessibleProperty($this->logger, 'messages'));
     }
 
     /**

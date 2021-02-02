@@ -1154,4 +1154,25 @@ final class Connection implements ConnectionInterface
     {
         throw new NotSupportedException(get_class($this) . ' does not support SetEnableSlaves() method.');
     }
+
+    /**
+     * Whether to enable schema caching. Note that in order to enable truly schema caching, a valid cache component as
+     * specified must be enabled and {@see setEnable()} must be set true.
+     *
+     * @param bool $value
+     */
+    public function setSchemaCacheEnable(bool $value): void
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support setSchemaCacheEnable() method.');
+    }
+
+    /**
+     * Whether to enable query caching. Note that in order to enable query caching, a valid cache component as specified
+     * must be enabled and {@see enabled} must be set true. Also, only the results of the queries enclosed within
+     * {@see cache()} will be cached.
+     */
+    public function setQueryCacheEnable(bool $value): void
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support setQueryCacheEnable() method.');
+    }
 }
