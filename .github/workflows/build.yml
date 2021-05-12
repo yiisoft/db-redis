@@ -37,7 +37,7 @@ jobs:
           redis-version: ${{ matrix.redis }}
 
       - name: Install PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@2.11.0
         with:
           php-version: ${{ matrix.php }}
           ini-values: date.timezone='UTC'
