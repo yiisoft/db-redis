@@ -29,7 +29,7 @@
         "vimeo/psalm": "^4.5",
         "yiisoft/aliases": "^1.0",
         "yiisoft/cache": "^1.0",
-        "yiisoft/di": "^3.0@dev"
+        "yiisoft/di": "^1.0"
     },
     "autoload": {
         "psr-4": { "Yiisoft\\Db\\Redis\\": "src" }

@@ -1175,4 +1175,20 @@ final class Connection implements ConnectionInterface
     {
         throw new NotSupportedException(get_class($this) . ' does not support setQueryCacheEnable() method.');
     }
+
+    /**
+     * Quotes a column name for use in a query.
+     *
+     * If the column name contains prefix, the prefix will also be properly quoted.
+     * If the column name is already quoted or contains special characters including '(', '[[' and '{{', then this
+     * method will do nothing.
+     *
+     * @param string $name column name
+     *
+     * @return string the properly quoted column name
+     */
+    public function quoteColumnName(string $name): string
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support quoteColumnName() method.');
+    }
 }
