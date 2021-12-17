@@ -22,11 +22,12 @@ use Yiisoft\Db\Redis\Event\AfterOpen;
 use Yiisoft\Db\Redis\Tests\Data\Event\AfterCustom;
 use Yiisoft\Db\Redis\Tests\Data\Provider\EventDispatcherProvider;
 use Yiisoft\Db\TestUtility\IsOneOfAssert;
+use Yiisoft\Definitions\Reference;
 use Yiisoft\Di\Container;
+use Yiisoft\Di\ContainerConfig;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\ListenerCollection;
 use Yiisoft\EventDispatcher\Provider\Provider;
-use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Log\Logger;
 use Yiisoft\Yii\Event\InvalidEventConfigurationFormatException;
@@ -107,7 +108,8 @@ class TestCase extends AbstractTestCase
 
     protected function configContainer(): void
     {
-        $this->container = new Container($this->config());
+        $config = ContainerConfig::create()->withDefinitions($this->config());
+        $this->container = new Container($config);
         $this->aliases = $this->container->get(Aliases::class);
         $this->cache = $this->container->get(CacheInterface::class);
         $this->logger = $this->container->get(LoggerInterface::class);
@@ -236,13 +238,15 @@ class TestCase extends AbstractTestCase
 
         return [
             Aliases::class => [
-                '@root' => dirname(__DIR__, 1),
-                '@data' =>  '@root/tests/Data',
-                '@runtime' => '@data/runtime',
+                '__construct()' => [
+                    '@root' => dirname(__DIR__, 1),
+                    '@data' =>  '@root/tests/Data',
+                    '@runtime' => '@data/runtime',
+                ],
             ],
 
             CacheInterface::class => [
-                '__class' => Cache::class,
+                'class' => Cache::class,
                 '__construct()' => [
                     Reference::to(ArrayCache::class)
                 ]
@@ -306,7 +310,7 @@ class TestCase extends AbstractTestCase
             EventDispatcherInterface::class => Dispatcher::class,
 
             Connection::class => [
-                '__class' => Connection::class,
+                'class' => Connection::class,
                 'host()' => [$params['yiisoft/db-redis']['dsn']['host']],
                 'port()' => [$params['yiisoft/db-redis']['dsn']['port']],
                 'database()' => [$params['yiisoft/db-redis']['dsn']['database']],
