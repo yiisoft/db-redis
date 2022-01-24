@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2
 
       - name: Start Redis v${{ matrix.redis }}
-        uses: superchargejs/redis-github-action@1.4.0
+        uses: superchargejs/redis-github-action@v1
         with:
           redis-version: ${{ matrix.redis }}
 
