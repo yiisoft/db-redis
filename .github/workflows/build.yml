@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Start Redis v${{ matrix.redis }}
-        uses: superchargejs/redis-github-action@v1
+        uses: superchargejs/redis-github-action@1.4.0
         with:
           redis-version: ${{ matrix.redis }}
 
