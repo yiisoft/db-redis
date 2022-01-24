@@ -18,7 +18,6 @@
         "ext-mbstring": "*",
         "ext-json": "*",
         "yiisoft/arrays": "^2.0",
-        "yiisoft/db": "^3.0@dev",
         "yiisoft/log": "^1.0",
         "yiisoft/strings": "^2.0",
         "yiisoft/yii-event": "^1.0"
