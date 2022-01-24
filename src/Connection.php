@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Redis;
 
+use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Command\Command;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\Exception;
-use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Redis\Event\AfterOpen;
-use Yiisoft\Db\Schema\Schema;
-use Yiisoft\Db\Schema\TableSchema;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\VarDumper\VarDumper;
 
@@ -252,7 +247,7 @@ use function version_compare;
  * @method mixed hscan($key, $cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate hash fields and associated values. <https://redis.io/commands/hscan>
  * @method mixed zscan($key, $cursor, $MATCH = null, $pattern = null, $COUNT = null, $count = null) Incrementally iterate sorted sets elements and associated scores. <https://redis.io/commands/zscan>
  */
-final class Connection implements ConnectionInterface
+final class Connection
 {
     private string $hostname = 'localhost';
     private string $redirectConnectionString = '';
@@ -1076,21 +1071,6 @@ final class Connection implements ConnectionInterface
     }
 
     /**
-     * Creates a command for execution.
-     *
-     * @param string|null $sql the SQL statement to be executed
-     * @param array $params the parameters to be bound to the SQL statement
-     *
-     * @throws NotSupportedException
-     *
-     * @return Command the DB command
-     */
-    public function createCommand(?string $sql = null, array $params = []): Command
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support Command::class.');
-    }
-
-    /**
      * @return string the Data Source Name, or DSN, contains the information required to connect to the database.
      *
      * Please refer to the [PHP manual](https://secure.php.net/manual/en/pdo.construct.php) on the format of the DSN
@@ -1099,18 +1079,6 @@ final class Connection implements ConnectionInterface
     public function getDsn(): string
     {
         return $this->dsn;
-    }
-
-    /**
-     * Returns the schema information for the database opened by this connection.
-     *
-     * @throws NotSupportedException
-     *
-     * @return Schema the schema information for the database opened by this connection.
-     */
-    public function getSchema(): Schema
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support Schema::class.');
     }
 
     /**
@@ -1125,70 +1093,5 @@ final class Connection implements ConnectionInterface
         $version = (explode("\r\n", $this->executeCommand('INFO', ['server'])));
 
         return $version[1];
-    }
-
-    /**
-     * Obtains the schema information for the named table.
-     *
-     * @param string $name table name.
-     * @param bool $refresh whether to reload the table schema even if it is found in the cache.
-     *
-     * @throws NotSupportedException
-     *
-     * @return TableSchema|null
-     */
-    public function getTableSchema($name, $refresh = false): ?TableSchema
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support TableShema::class.');
-    }
-
-    /**
-     * Whether to enable read/write splitting by using {@see setSlaves()} to read data. Note that if {@see setSlaves()}
-     * is empty, read/write splitting will NOT be enabled no matter what value this property takes.
-     *
-     * @param bool $value
-     *
-     * @throws NotSupportedException
-     */
-    public function setEnableSlaves(bool $value): void
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support SetEnableSlaves() method.');
-    }
-
-    /**
-     * Whether to enable schema caching. Note that in order to enable truly schema caching, a valid cache component as
-     * specified must be enabled and {@see setEnable()} must be set true.
-     *
-     * @param bool $value
-     */
-    public function setSchemaCacheEnable(bool $value): void
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support setSchemaCacheEnable() method.');
-    }
-
-    /**
-     * Whether to enable query caching. Note that in order to enable query caching, a valid cache component as specified
-     * must be enabled and {@see enabled} must be set true. Also, only the results of the queries enclosed within
-     * {@see cache()} will be cached.
-     */
-    public function setQueryCacheEnable(bool $value): void
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support setQueryCacheEnable() method.');
-    }
-
-    /**
-     * Quotes a column name for use in a query.
-     *
-     * If the column name contains prefix, the prefix will also be properly quoted.
-     * If the column name is already quoted or contains special characters including '(', '[[' and '{{', then this
-     * method will do nothing.
-     *
-     * @param string $name column name
-     *
-     * @return string the properly quoted column name
-     */
-    public function quoteColumnName(string $name): string
-    {
-        throw new NotSupportedException(get_class($this) . ' does not support quoteColumnName() method.');
     }
 }
