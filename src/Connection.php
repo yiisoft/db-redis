@@ -1143,6 +1143,20 @@ final class Connection implements ConnectionInterface
     }
 
     /**
+     * Whether to enable auto-detection of read queries and use slave (if enabled) for execute
+     *
+     * @throws NotSupportedException
+     *
+     * @return bool:
+     *  true -> (default) use slave for read queries, master for other
+     *  false -> always use master connection (for reads and writes). Slave still can be used via $this->getSlave()
+     */
+    public function isAutoSlaveForReadQueriesEnabled(): bool
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support SetEnableSlaves() method.');
+    }
+
+    /**
      * Whether to enable read/write splitting by using {@see setSlaves()} to read data. Note that if {@see setSlaves()}
      * is empty, read/write splitting will NOT be enabled no matter what value this property takes.
      *
