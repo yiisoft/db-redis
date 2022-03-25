@@ -1143,7 +1143,7 @@ final class Connection implements ConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isAutoSlaveForReadQueriesEnabled(): bool
     {
