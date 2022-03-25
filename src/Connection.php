@@ -1143,13 +1143,7 @@ final class Connection implements ConnectionInterface
     }
 
     /**
-     * Whether to enable auto-detection of read queries and use slave (if enabled) for execute
-     *
-     * @throws NotSupportedException
-     *
-     * @return bool:
-     *  true -> (default) use slave for read queries, master for other
-     *  false -> always use master connection (for reads and writes). Slave still can be used via $this->getSlave()
+     * @inheritdoc
      */
     public function isAutoSlaveForReadQueriesEnabled(): bool
     {
