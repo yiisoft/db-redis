@@ -1143,6 +1143,14 @@ final class Connection implements ConnectionInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function isAutoSlaveForReadQueriesEnabled(): bool
+    {
+        throw new NotSupportedException(get_class($this) . ' does not support SetEnableSlaves() method.');
+    }
+
+    /**
      * Whether to enable read/write splitting by using {@see setSlaves()} to read data. Note that if {@see setSlaves()}
      * is empty, read/write splitting will NOT be enabled no matter what value this property takes.
      *
