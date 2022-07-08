@@ -1,4 +1,4 @@
-Yii Framework 2 redis extension Change Log
+Yii DB Redis extension Change Log
 ==========================================
 
 2.0.9 under development
