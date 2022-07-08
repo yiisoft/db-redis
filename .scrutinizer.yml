@@ -13,7 +13,7 @@ build:
     nodes:
         analysis:
             environment:
-                php: 8.0.18
+                php: 8.0.20
 
             tests:
                 override:
