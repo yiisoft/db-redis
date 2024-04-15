@@ -7,7 +7,7 @@
 
 ## Установка расширения
 
-Предпочтительным способом установки этого расширения является [Composer](http://getcomposer.org/download/).
+Предпочтительным способом установки этого расширения является [Composer](https://getcomposer.org/download/).
 
 Для этого запустите команду
 
@@ -42,7 +42,7 @@ return [
 ```
 
 Это обеспечивает базовый доступ к redis-хранилищу через компонент приложения `redis`:
- 
+
 ```php
 Yii::$app->redis->set('mykey', 'some value');
 echo Yii::$app->redis->get('mykey');

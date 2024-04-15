@@ -41,17 +41,17 @@ use function usleep;
 use function version_compare;
 
 /**
- * The redis connection class is used to establish a connection to a [redis](http://redis.io/) server.
+ * The redis connection class is used to establish a connection to a [redis](https://redis.io/) server.
  *
  * By default it assumes there is a redis server running on localhost at port 6379 and uses the database number 0.
  *
  * It is possible to connect to a redis server using [[hostname]] and [[port]] or using a [[unixSocket]].
  *
- * It also supports [the AUTH command](http://redis.io/commands/auth) of redis.
+ * It also supports [the AUTH command](https://redis.io/commands/auth) of redis.
  * When the server needs authentication, you can set the [[password]] property to
  * authenticate with the server after connect.
  *
- * The execution of [redis commands](http://redis.io/commands) is possible with via [[executeCommand()]].
+ * The execution of [redis commands](https://redis.io/commands) is possible with via [[executeCommand()]].
  *
  * @method mixed append($key, $value) Append a value to a key. <https://redis.io/commands/append>
  * @method mixed auth($password) Authenticate to the server. <https://redis.io/commands/auth>
@@ -566,7 +566,7 @@ final class Connection implements ConnectionInterface
         );
 
         if ($socket) {
-            $this->pool[ $this->getConnectionString() ] = $socket;
+            $this->pool[$this->getConnectionString()] = $socket;
 
             if ($this->dataTimeout !== null) {
                 stream_set_timeout(

@@ -7,9 +7,9 @@ At least redis version 2.6.12 is required for all components to work properly.
 
 ## Getting Composer package
 
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
-```
+```shell
 composer require --prefer-dist yiisoft/db-redis
 ```
 
@@ -32,7 +32,7 @@ return [
 ```
 
 This provides the basic access to redis storage via the `redis` application component:
- 
+
 ```php
 Yii::$app->redis->set('mykey', 'some value');
 echo Yii::$app->redis->get('mykey');
