@@ -66,8 +66,8 @@ return [
 ## Documentation
 
 - [English](docs/guide/en/README.md)
-- [Portuguese - Brazil](docs/guide/pt-BR/README.md)
-- More information can be found in the [Internals.](docs/internals.md)
+- [Português - Brasil](docs/guide/pt-BR/readme.md)
+- [Internals](docs/internals.md)
 
 ## Support
 
