@@ -1,14 +1,20 @@
 {
     "name": "yiisoft/db-redis",
     "description": "Yii Framework Redis Cache, Session and ActiveRecord extension",
-    "keywords": ["yii", "redis", "active-record", "cache", "session"],
+    "keywords": [
+        "yii",
+        "redis",
+        "active-record",
+        "cache",
+        "session"
+    ],
     "type": "library",
     "license": "BSD-3-Clause",
     "support": {
         "issues": "https://github.com/yiisoft/db-redis/issues",
-        "forum": "http://www.yiiframework.com/forum/",
-        "wiki": "http://www.yiiframework.com/wiki/",
-        "irc": "irc://irc.freenode.net/yii",
+        "forum": "https://www.yiiframework.com/forum/",
+        "wiki": "https://www.yiiframework.com/wiki/",
+        "irc": "ircs://irc.libera.chat:6697/yii",
         "source": "https://github.com/yiisoft/db-redis"
     },
     "minimum-stability": "dev",
@@ -32,7 +38,9 @@
         "yiisoft/di": "^1.0"
     },
     "autoload": {
-        "psr-4": { "Yiisoft\\Db\\Redis\\": "src" }
+        "psr-4": {
+            "Yiisoft\\Db\\Redis\\": "src"
+        }
     },
     "autoload-dev": {
         "psr-4": {
