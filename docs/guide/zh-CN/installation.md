@@ -12,7 +12,7 @@ redis 2.6.12 版本是所有部件正常工作所必需的。
 可以运行
 
 ```
-php composer.phar require --prefer-dist yiisoft/db-redis
+php composer.phar require yiisoft/db-redis
 ```
 
 或者添加

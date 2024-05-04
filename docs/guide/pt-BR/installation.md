@@ -10,7 +10,7 @@ At least redis version 2.6.12 is required for all components to work properly.
 The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
 ```shell
-composer require --prefer-dist yiisoft/db-redis
+composer require yiisoft/db-redis
 ```
 
 ## Configuring application

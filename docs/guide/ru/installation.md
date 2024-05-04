@@ -12,7 +12,7 @@
 Для этого запустите команду
 
 ```
-php composer.phar require --prefer-dist yiisoft/db-redis
+php composer.phar require yiisoft/db-redis
 ```
 
 или добавьте
