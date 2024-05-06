@@ -24,7 +24,7 @@ This extension provides the [redis](https://redis.io/) connection support for th
 
 ## Installation
 
-The package could be installed via composer:
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
 composer require yiisoft/db-redis
