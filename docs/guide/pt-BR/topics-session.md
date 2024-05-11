@@ -1,8 +1,7 @@
-Using the Session component
-===========================
+# Usando o componente Session
 
-To use the `Session` component, in addition to configuring the connection as described in the [Installation](installation.md) section,
-you also have to configure the `session` component to be [[Yiisoft\Db\Redis\Session]]:
+Para utilizar o componente [Session](https://github.com/yiisoft/session), além de configurar a conexão conforme descrito na seção  [Configurando o aplicativo](../../../README.md#Configuring-application),
+você também deve configurar o componente `session` como `Yiisoft\Db\Redis\Session`:
 
 ```php
 return [
@@ -16,8 +15,8 @@ return [
 ];
 ```
 
-If you only use redis session (i.e., not using its ActiveRecord or Cache), you can also configure the parameters of the connection within the
-session component (no connection application component needs to be configured in this case):
+Se você usar apenas sessão redis (ou seja, não usar [ActiveRecord](https://github.com/yiisoft/active-record) ou [Cache](https://github.com/yiisoft/cache-redis)), você também pode configurar os parâmetros da conexão dentro do
+componente de sessão (nenhum componente de aplicativo de conexão precisa ser configurado neste caso):
 
 ```php
 return [

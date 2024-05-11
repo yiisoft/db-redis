@@ -12,7 +12,7 @@
 下記のコマンドを実行してください。
 
 ```
-php composer.phar require yiisoft/db-redis
+composer require yiisoft/db-redis
 ```
 
 または、あなたの `composer.json` ファイルの `require` セクションに、
