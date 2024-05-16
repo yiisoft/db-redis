@@ -1,9 +1,9 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="100px" alt="Yii">
+        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="80px" alt="Yii">
     </a>
     <a href="https://redis.io/" target="_blank">
-        <img src="https://download.redis.io/redis.png" height="80px" alt="DBAL Redis">
+        <img src="https://download.redis.io/redis.png" height="80px" alt="Redis">
     </a>
     <h1 align="center">Yii DBAL Redis connection</h1>
     <br>
