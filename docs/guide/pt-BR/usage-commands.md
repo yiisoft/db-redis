@@ -1,23 +1,22 @@
-Using commands directly
-=======================
+# Usando comandos diretamente
 
-Redis has lots of useful commands which could be used directly from connection. After configuring application as
-shown in [installation](installation.md), connection could be obtained like the following:
+Redis tem muitos comandos úteis que podem ser usados diretamente pela conexão. Depois de configurar o aplicativo como
+mostrado na seção [Configurando o aplicativo](../../../README.md#Configuring-application), a conexão pode ser obtida da seguinte forma:
 
 ```php
 $redis = Yii::$app->redis;
 ```
 
-After it's done one can execute commands. The most generic way to do it is using `executeCommand` method:
+Depois de feito, pode-se executar comandos. A maneira mais genérica de fazer isso é usando o método `executeCommand`:
 
 ```php
 $result = $redis->executeCommand('hmset', ['test_collection', 'key1', 'val1', 'key2', 'val2']);
 ```
 
-There are shortcuts available for each command supported so insted of the above it can be used as follows:
+Existem atalhos disponíveis para cada comando suportado, portanto, em vez do acima, ele pode ser usado da seguinte maneira:
 
 ```php
 $result = $redis->hmset('test_collection', 'key1', 'val1', 'key2', 'val2');
 ```
 
-For a list of available commands and their parameters see <https://redis.io/commands>.
+Para obter uma lista de comandos disponíveis e seus parâmetros, consulte [Comandos redis](https://redis.io/commands).

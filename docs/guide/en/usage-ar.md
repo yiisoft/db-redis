@@ -1,11 +1,10 @@
-Using the ActiveRecord
-======================
+# Using the ActiveRecord
 
-For general information on how to use yii's ActiveRecord please refer to the [guide](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
+For general information on how to use Yii ActiveRecord please refer to the [guide](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
 
-For defining a redis ActiveRecord class your record class needs to extend from [[Yiisoft\Db\Redis\ActiveRecord]] and
+For defining a redis ActiveRecord class your record class needs to extend from `Yiisoft\Db\Redis\ActiveRecord` and
 implement at least the `attributes()` method to define the attributes of the record.
-A primary key can be defined via [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]] which defaults to `id` if not specified.
+A primary key can be defined via `Yiisoft\Db\Redis\ActiveRecord::primaryKey()` which defaults to `id` if not specified.
 The primaryKey needs to be part of the attributes so make sure you have an `id` attribute defined if you do
 not specify your own primary key.
 
@@ -48,7 +47,7 @@ It supports the same interface and features except the following limitations:
   `where()`, `limit()`, `offset()`, `orderBy()` and `indexBy()`.
 - `via`-relations can not be defined via a table as there are not tables in redis. You can only define relations via other records.
 
-It is also possible to define relations from redis ActiveRecords to normal ActiveRecord classes and vice versa.
+It is also possible to define relations from redis ActiveRecords to normal [ActiveRecord](https://github.com/yiisoft/active-record) classes and vice versa.
 
 Usage example:
 

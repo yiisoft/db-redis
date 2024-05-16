@@ -1,8 +1,7 @@
-Using the Cache component
-=========================
+# Usando o componente Cache
 
-To use the `Cache` component, in addition to configuring the connection as described in the [Installation](installation.md) section,
-you also have to configure the `cache` component to be [[Yiisoft\Db\Redis\Cache]]:
+Para utilizar a [Caching Library](https://github.com/yiisoft/cache-redis), além de configurar a conexão conforme descrito na seção [Configurando o aplicativo](../../../README.md#Configuring-application),
+você também deve configurar o componente `cache` como `Yiisoft\Db\Redis\Cache`:
 
 ```php
 return [
@@ -16,8 +15,8 @@ return [
 ];
 ```
 
-If you only use the redis cache (i.e., not using its ActiveRecord or Session), you can also configure the parameters of the connection within the
-cache component (no connection application component needs to be configured in this case):
+Se você usar apenas o cache redis (ou seja, não usar seu [ActiveRecord](https://github.com/yiisoft/active-record) ou [Session](https://github.com/yiisoft/session)), você também pode configurar os parâmetros da conexão dentro do
+componente de cache (nenhum componente de aplicativo de conexão precisa ser configurado neste caso):
 
 ```php
 return [
@@ -36,8 +35,8 @@ return [
 ];
 ```
 
-The cache provides all methods of the [[yii\caching\CacheInterface]]. If you want to access redis specific methods that are not
-included in the interface, you can use them via [[Yiisoft\Db\Redis\Cache::$redis]], which is an instance of [[Yiisoft\Db\Redis\Connection]]:
+O cache fornece todos os métodos de `yii\caching\CacheInterface`. Se você deseja acessar métodos específicos do Redis que não estão
+incluídos na interface, você pode usá-los via `Yiisoft\Db\Redis\Cache::$redis`, que é uma instância de`Yiisoft\Db\Redis\Connection`:
 
 ```php
 Yii::$app->cache->redis->hset('mykey', 'somefield', 'somevalue');
@@ -45,4 +44,4 @@ Yii::$app->cache->redis->hget('mykey', 'somefield');
 ...
 ```
 
-See [[Yiisoft\Db\Redis\Connection]] for a full list of available methods.
+Veja `Yiisoft\Db\Redis\Connection` para uma lista completa dos métodos disponíveis.

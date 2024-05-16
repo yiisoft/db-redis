@@ -7,12 +7,12 @@ redis 2.6.12 版本是所有部件正常工作所必需的。
 
 ## 获取 Composer 安装包
 
-安装此扩展的首选方式是通过 [composer](https://getcomposer.org/download/)。
+安装此扩展的首选方式是通过 [Composer](https://getcomposer.org):。
 
 可以运行
 
 ```
-php composer.phar require --prefer-dist yiisoft/db-redis
+composer require yiisoft/db-redis
 ```
 
 或者添加

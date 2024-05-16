@@ -7,12 +7,12 @@
 
 ## Установка расширения
 
-Предпочтительным способом установки этого расширения является [Composer](https://getcomposer.org/download/).
+Предпочтительным способом установки этого расширения является [Composer](https://getcomposer.org):
 
 Для этого запустите команду
 
 ```
-php composer.phar require --prefer-dist yiisoft/db-redis
+composer require yiisoft/db-redis
 ```
 
 или добавьте

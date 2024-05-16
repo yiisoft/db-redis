@@ -7,12 +7,12 @@
 
 ## Composer パッケージを取得する
 
-このエクステンションをインストールするのに推奨される方法は [composer](https://getcomposer.org/download/) によるものです。
+このエクステンションをインストールするのに推奨される方法は [Composer](https://getcomposer.org): によるものです。
 
 下記のコマンドを実行してください。
 
 ```
-php composer.phar require --prefer-dist yiisoft/db-redis
+composer require yiisoft/db-redis
 ```
 
 または、あなたの `composer.json` ファイルの `require` セクションに、

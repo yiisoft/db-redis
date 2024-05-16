@@ -1,15 +1,14 @@
-Using the ActiveRecord
-======================
+# Usando ActiveRecord
 
-For general information on how to use yii's ActiveRecord please refer to the [guide](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
+Para informações gerais sobre como usar o Yii ActiveRecord, consulte o [guia](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
 
-For defining a redis ActiveRecord class your record class needs to extend from [[Yiisoft\Db\Redis\ActiveRecord]] and
-implement at least the `attributes()` method to define the attributes of the record.
-A primary key can be defined via [[Yiisoft\Db\Redis\ActiveRecord::primaryKey()]] which defaults to `id` if not specified.
-The primaryKey needs to be part of the attributes so make sure you have an `id` attribute defined if you do
-not specify your own primary key.
+Para definir uma classe Redis ActiveRecord, sua classe de registro precisa se estender de `Yiisoft\Db\Redis\ActiveRecord` e
+implemente pelo menos o método `attributes()` para definir os atributos do registro.
+Uma chave primária pode ser definida via `Yiisoft\Db\Redis\ActiveRecord::primaryKey()` cujo padrão é `id` se não for especificado.
+O PrimaryKey precisa fazer parte dos atributos, então certifique-se de ter um atributo `id` definido se você fizer isso
+não especifique sua própria chave primária.
 
-The following is an example model called `Customer`:
+A seguir está um modelo de exemplo chamado `Customer`:
 
 ```php
 class Customer extends \Yiisoft\Db\Redis\ActiveRecord
@@ -40,17 +39,17 @@ class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 }
 ```
 
-The general usage of redis ActiveRecord is very similar to the database ActiveRecord as described in the
-[guide](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
-It supports the same interface and features except the following limitations:
+O uso geral do redis ActiveRecord é muito semelhante ao banco de dados ActiveRecord conforme descrito no
+[guia](https://www.yiiframework.com/doc/guide/2.0/en/db-active-record).
+Ele suporta a mesma interface e recursos, exceto as seguintes limitações:
 
-- As redis does not support SQL the query API is limited to the following methods:
-  `where()`, `limit()`, `offset()`, `orderBy()` and `indexBy()`.
-- `via`-relations can not be defined via a table as there are not tables in redis. You can only define relations via other records.
+- Como redis não suporta SQL, a API de consulta está limitada aos seguintes métodos:
+   `where()`, `limit()`, `offset()`, `orderBy()` e `indexBy()`.
+- As relações `via` não podem ser definidas através de uma tabela, pois não existem tabelas no redis. Você só pode definir relações através de outros registros.
 
-It is also possible to define relations from redis ActiveRecords to normal ActiveRecord classes and vice versa.
+Também é possível definir relações de ActiveRecords redis para classes [ActiveRecord](https://github.com/yiisoft/active-record) normais e vice-versa.
 
-Usage example:
+Exemplo de uso:
 
 ```php
 $customer = new Customer();
