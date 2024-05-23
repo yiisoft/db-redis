@@ -1,7 +1,7 @@
 活动记录的使用
 ======================
 
-对于如何使用 yii 的活动记录一般信息请参阅 [指南](https://github.com/yiisoft/yii2/blob/master/docs/guide/active-record.md)。
+对于如何使用 yii 的活动记录一般信息请参阅 [指南](https://github.com/yiisoft/yii2/blob/master/docs/guide/db-active-record.md)。
 
 定义一个 redis 活动记录类，你的记录类需要继承自 [[Yiisoft\Db\Redis\ActiveRecord]] 并且
 至少实现 `attributes()` 方法来定义记录的属性。
@@ -41,7 +41,7 @@ class Customer extends \Yiisoft\Db\Redis\ActiveRecord
 ```
 
 redis 活动记录的一般用法和数据库活动记录非常相似，正如
-[指南](https://github.com/yiisoft/yii2/blob/master/docs/guide/active-record.md) 中所描述的。
+[指南](https://github.com/yiisoft/yii2/blob/master/docs/guide/db-active-record.md) 中所描述的。
 它支持相同的界面和功能，除了以下限制：
 
 - redis 不支持 SQL 查询的 API 仅限于以下方法：
