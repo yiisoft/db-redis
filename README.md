@@ -1,3 +1,6 @@
+> [!WARNING]
+> There is no official Redis support planned for Yii3 DB. Use [predis](https://github.com/predis/predis) or [phpredis](https://github.com/phpredis/phpredis) instead.
+
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="80px" alt="Yii">
